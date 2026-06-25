@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>かな練習 — Kana Practice</title>
+  <meta name="description" content="Practice Japanese hiragana and katakana with multiple-choice, typing, and reverse quizzes." />
+  <style>
+    :root {
+      --bg: #f7f6f3;
+      --card: #ffffff;
+      --ink: #2b2722;
+      --muted: #8a8378;
+      --line: #e8e4dc;
+      --accent: #c44536;
+      --accent-soft: #fbe9e6;
+      --good: #2f8f5b;
+      --good-soft: #e2f3e9;
+      --bad: #c44536;
+      --bad-soft: #fbe9e6;
+      --shadow: 0 6px 24px rgba(43, 39, 34, 0.06);
+      --radius: 14px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      overflow-x: hidden;
+      /* smooth crossfade when switching themes */
+      transition: background 0.8s ease;
+    }
+
+    /* =============================================
+       THEME: SUNSET (default)
+       Purple→magenta→peach sky with setting sun,
+       warm ground-haze glow, and sakura petals.
+    ============================================= */
+    body[data-theme="sunset"] {
+      background:
+        radial-gradient(circle at 80% 14%, rgba(255, 226, 165, 0.55), transparent 40%),
+        linear-gradient(160deg, #2b1f44 0%, #6a3a6e 30%, #c25b7a 62%, #f0a07b 100%);
+      background-attachment: fixed;
+    }
+    /* setting sun */
+    body[data-theme="sunset"]::before {
+      content: "";
+      position: fixed;
+      top: 7%;
+      right: 13%;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 243, 210, 0.9), rgba(255, 205, 145, 0.3) 58%, transparent 72%);
+      filter: blur(4px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* warm ground haze at the bottom */
+    body[data-theme="sunset"]::after {
+      content: "";
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 22%;
+      background: linear-gradient(to top, rgba(240, 160, 123, 0.45), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =============================================
+       THEME: NIGHT
+       Deep blue→indigo sky, crescent moon, horizon
+       glow, twinkling stars, shooting stars.
+    ============================================= */
+    body[data-theme="night"] {
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(30, 25, 80, 0.6) 0%, transparent 60%),
+        linear-gradient(180deg, #050816 0%, #0c1330 45%, #1a1f4a 100%);
+      background-attachment: fixed;
+    }
+    /* crescent moon */
+    .moon {
+      position: fixed;
+      top: 8%;
+      left: 12%;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #f0f0ff 0%, #c8cce8 60%, transparent 72%);
+      box-shadow: 0 0 40px 8px rgba(200, 210, 255, 0.25), 0 0 80px 20px rgba(160, 170, 220, 0.1);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.8s ease;
+    }
+    /* mask to make crescent shape */
+    .moon::after {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 18px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #050816;
+    }
+    body:not([data-theme="night"]) .moon { opacity: 0; pointer-events: none; }
+
+    /* --- Night dark-mode overrides (complete) --- */
+    body[data-theme="night"] .brand,
+    body[data-theme="night"] .best { color: #f4f5ff; }
+    body[data-theme="night"] .brand { text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    body[data-theme="night"] .card {
+      background: rgba(15, 20, 50, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 48px rgba(5, 8, 22, 0.5), 0 0 1px rgba(120, 140, 255, 0.15);
+    }
+    body[data-theme="night"] .kana-display,
+    body[data-theme="night"] .section-sub,
+    body[data-theme="night"] .group-label,
+    body[data-theme="night"] .quizbar,
+    body[data-theme="night"] .result-pct,
+    body[data-theme="night"] .result-msg,
+    body[data-theme="night"] .stat-box .lbl,
+    body[data-theme="night"] .missed-head,
+    body[data-theme="night"] .missed-empty,
+    body[data-theme="night"] .quit-link,
+    body[data-theme="night"] h1.section-title { color: #f4f5ff; }
+    body[data-theme="night"] .section-sub,
+    body[data-theme="night"] .group-label,
+    body[data-theme="night"] .stat-box .lbl { color: #a7adcf; }
+    body[data-theme="night"] .result-score { color: #ffc46b; }
+    body[data-theme="night"] .result-score small { color: #a7adcf; }
+    body[data-theme="night"] #promptText,
+    body[data-theme="night"] .feedback.bad { color: #ffb4b4; }
+    body[data-theme="night"] .stat-box { background: rgba(255,255,255,0.04); }
+    body[data-theme="night"] .missed-list { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
+    body[data-theme="night"] .missed-list li { border-color: rgba(255,255,255,0.08); }
+    body[data-theme="night"] .missed-list .arrow { color: #6b70a0; }
+    body[data-theme="night"] .progress-track { background: rgba(255,255,255,0.08); }
+    body[data-theme="night"] .score-pill { color: #ffc46b; }
+    body[data-theme="night"] .chip,
+    body[data-theme="night"] .choice,
+    body[data-theme="night"] .btn-ghost,
+    body[data-theme="night"] .replay-btn,
+    body[data-theme="night"] .type-input {
+      background: rgba(255,255,255,0.05);
+      color: #f4f5ff;
+      border-color: rgba(255,255,255,0.15);
+    }
+    body[data-theme="night"] .type-input::placeholder { color: #6f75a0; }
+    body[data-theme="night"] .type-input:focus { border-color: rgba(255, 196, 107, 0.7); box-shadow: 0 0 0 4px rgba(255, 196, 107, 0.1); }
+    body[data-theme="night"] .chip.on {
+      background: #ffc46b;
+      border-color: #ffc46b;
+      color: #1a1f4a;
+    }
+    body[data-theme="night"] .chip:hover:not(.on) { border-color: rgba(255, 196, 107, 0.5); }
+    body[data-theme="night"] .choice .key { color: #6b70a0; }
+    body[data-theme="night"] .choice:hover:not(.locked) { border-color: rgba(255, 196, 107, 0.5); }
+    body[data-theme="night"] .btn-primary {
+      background: #ffc46b;
+      color: #1a1f4a;
+      box-shadow: 0 6px 20px rgba(255, 196, 107, 0.25);
+    }
+    body[data-theme="night"] .btn-ghost:hover { border-color: #ffc46b; color: #ffc46b; }
+    body[data-theme="night"] .replay-btn:hover { border-color: rgba(255, 196, 107, 0.5); }
+    /* night header chrome — dark glass */
+    body[data-theme="night"] .top-right .theme-switch,
+    body[data-theme="night"] .top-right .best {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
+    }
+    body[data-theme="night"] .swatch.on { background: rgba(255,255,255,0.2); }
+
+    /* =============================================
+       THEME: SUMMER
+       Bright blue sky, puffy clouds, golden sun,
+       sakura petals (reused from sunset).
+    ============================================= */
+    body[data-theme="summer"] {
+      background:
+        linear-gradient(180deg, #3a9fe0 0%, #6abced 50%, #a8daf5 100%);
+      background-attachment: fixed;
+    }
+    body[data-theme="summer"] .brand { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    body[data-theme="summer"] .brand .jp { color: #ffe944; }
+    /* golden sun */
+    .summer-sun {
+      position: fixed;
+      top: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 248, 200, 1), rgba(255, 220, 80, 0.6) 50%, transparent 72%);
+      box-shadow: 0 0 60px 20px rgba(255, 220, 80, 0.25);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.8s ease;
+    }
+    body:not([data-theme="summer"]) .summer-sun { opacity: 0; pointer-events: none; }
+    /* summer card — light sky-blue glass */
+    body[data-theme="summer"] .card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 12px 40px rgba(0, 40, 80, 0.12);
+    }
+    /* summer petal tint — slightly warm pink */
+    body[data-theme="summer"] .petals span {
+      filter: hue-rotate(-10deg) saturate(0.8);
+    }
+
+    /* =============================================
+       DECOR LAYERS — petals, stars, clouds
+    ============================================= */
+    .petals, .stars, .clouds {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    body[data-theme="night"] .petals,
+    body[data-theme="night"] .clouds { display: none; }
+    body:not([data-theme="night"]) .stars { display: none; }
+
+    /* --- Petals (sakura) with flutter --- */
+    .petals span {
+      position: absolute;
+      top: -40px;
+      width: 18px;
+      height: 18px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1 C15 5 15 13 10 19 C5 13 5 5 10 1Z' fill='%23ffd0dc'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      animation: fall linear infinite, sway ease-in-out infinite;
+      /* --drift set via JS per-petal */
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-40px) translateX(0) rotate(0deg); }
+      100% { transform: translateY(105vh) translateX(var(--drift, 70px)) rotate(360deg); }
+    }
+    @keyframes sway {
+      0%, 100% { margin-left: 0; }
+      50%      { margin-left: calc(var(--sway, 20px) * 1px); }
+    }
+
+    /* --- Stars with twinkle + glow --- */
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle ease-in-out infinite;
+    }
+    .stars span.glow {
+      box-shadow: 0 0 4px 1px rgba(200, 210, 255, 0.5);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; transform: scale(0.7); }
+      50%      { opacity: 1;    transform: scale(1.4); }
+    }
+
+    /* --- Shooting stars (night) ---
+       Each is a short tail with a glowing head. Position, angle,
+       speed, and delay are set via JS so the meteor appears to
+       fall from a different spot each time it loops. */
+    .shooting-star {
+      position: absolute;
+      width: 0;
+      height: 2px;
+      opacity: 0;
+      /* rotate(angle) first, then translate along the rotated x-axis */
+      transform: rotate(-30deg) translateX(0);
+      animation: shoot linear infinite;
+    }
+    /* the fading tail */
+    .shooting-star::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(to left, rgba(220, 230, 255, 0.9), rgba(180, 200, 255, 0.4) 40%, transparent);
+      border-radius: 2px;
+    }
+    /* the glowing head at the leading (right) edge */
+    .shooting-star::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -2px;
+      width: 6px;
+      height: 6px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 6px 2px rgba(220, 230, 255, 0.8);
+    }
+    @keyframes shoot {
+      0%   { opacity: 0; transform: rotate(-30deg) translateX(0); }
+      3%   { opacity: 1; }
+      20%  { opacity: 1; }
+      35%  { opacity: 0; transform: rotate(-30deg) translateX(520px); }
+      100% { opacity: 0; transform: rotate(-30deg) translateX(520px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .shooting-star { display: none; }
+    }
+
+    /* --- Drifting clouds (summer) --- */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      filter: blur(1px);
+      animation: drift linear infinite;
+    }
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+    }
+    .cloud:nth-child(1) {
+      width: 120px; height: 40px;
+      top: 10%; left: -150px;
+      animation-duration: 35s;
+    }
+    .cloud:nth-child(1)::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+    .cloud:nth-child(1)::after  { width: 70px; height: 55px; top: -20px; left: 50px; }
+    .cloud:nth-child(2) {
+      width: 100px; height: 35px;
+      top: 25%; left: -130px;
+      animation-duration: 45s;
+      animation-delay: -15s;
+      opacity: 0.5;
+    }
+    .cloud:nth-child(2)::before { width: 45px; height: 45px; top: -22px; left: 15px; }
+    .cloud:nth-child(2)::after  { width: 55px; height: 42px; top: -18px; left: 45px; }
+    .cloud:nth-child(3) {
+      width: 90px; height: 30px;
+      top: 42%; left: -120px;
+      animation-duration: 55s;
+      animation-delay: -30s;
+      opacity: 0.35;
+    }
+    .cloud:nth-child(3)::before { width: 40px; height: 38px; top: -18px; left: 12px; }
+    .cloud:nth-child(3)::after  { width: 48px; height: 36px; top: -15px; left: 40px; }
+    @keyframes drift {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(calc(100vw + 200px)); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .petals, .stars, .clouds { display: none; }
+    }
+
+    /* ===== SHARED: Japanese font ===== */
+    .jp, .kana-display {
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+        "Hiragino Sans", "Noto Sans JP", sans-serif;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== HEADER ===== */
+    .top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .brand {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: color 0.4s ease;
+    }
+    .brand .jp { color: #ffe08a; }
+    .best {
+      font-size: 0.85rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    .best b { color: #fff; }
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .theme-switch {
+      display: inline-flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 4px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.95rem;
+      line-height: 1;
+      padding: 0;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.on { background: rgba(255, 255, 255, 0.55); }
+
+    /* ===== CARD ===== */
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 40px rgba(30, 15, 45, 0.25);
+      padding: 32px 28px;
+      transition: background 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    h1.section-title {
+      font-size: 1.6rem;
+      margin-bottom: 4px;
+      transition: color 0.4s ease;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 26px;
+      transition: color 0.4s ease;
+    }
+
+    /* ===== SETUP GROUPS ===== */
+    .group { margin-bottom: 24px; }
+    .group-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      transition: color 0.4s ease;
+    }
+    .opts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .chip {
+      padding: 10px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: 50px;
+      background: var(--card);
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .chip:hover { border-color: var(--accent); }
+    .chip.on {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .chip.small { padding: 8px 12px; font-size: 0.9rem; }
+    .chip.small .jp { font-size: 1.1rem; margin-right: 2px; }
+
+    .row-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+      gap: 8px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-block;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: transform 0.12s, box-shadow 0.15s, background 0.15s, color 0.4s;
+      width: 100%;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(196, 69, 54, 0.28);
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled {
+      background: #c9c3ba;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-ghost {
+      background: var(--card);
+      color: var(--ink);
+      border: 1.5px solid var(--line);
+      transition: transform 0.12s, border-color 0.15s, color 0.15s, background 0.4s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ===== QUIZ ===== */
+    .quizbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      transition: color 0.4s ease;
+    }
+    .progress-track {
+      height: 6px;
+      background: var(--line);
+      border-radius: 50px;
+      overflow: hidden;
+      margin-bottom: 26px;
+      transition: background 0.4s ease;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 50px;
+    }
+    .score-pill {
+      font-weight: 700;
+      color: var(--accent);
+      transition: color 0.4s ease;
+    }
+
+    .kana-display {
+      font-size: 7rem;
+      line-height: 1;
+      text-align: center;
+      margin: 20px 0 8px;
+      color: var(--ink);
+      user-select: none;
+      cursor: pointer;
+      transition: transform 0.1s, color 0.4s ease;
+    }
+    .kana-display:active { transform: scale(0.96); }
+
+    .prompt-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+      transition: color 0.4s ease;
+    }
+    .replay-btn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 50px;
+      padding: 2px 9px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 6px;
+      font-family: inherit;
+      line-height: 1.6;
+      transition: border-color 0.15s, background 0.4s, color 0.4s;
+    }
+    .replay-btn:hover { border-color: var(--accent); }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .choice {
+      padding: 16px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+      font-family: inherit;
+      text-align: center;
+      position: relative;
+    }
+    .choice:hover:not(.locked) {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .choice .key {
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 700;
+      transition: color 0.4s ease;
+    }
+    .choice.correct {
+      background: var(--good-soft);
+      border-color: var(--good);
+      color: var(--good);
+    }
+    .choice.wrong {
+      background: var(--bad-soft);
+      border-color: var(--bad);
+      color: var(--bad);
+    }
+    .choice.locked { cursor: default; }
+
+    .type-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-size: 1.5rem;
+      font-family: inherit;
+      text-align: center;
+      text-transform: lowercase;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.4s, color 0.4s;
+      margin-bottom: 14px;
+    }
+    .type-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(196, 69, 54, 0.12);
+    }
+    .type-input.correct { border-color: var(--good); box-shadow: 0 0 0 4px rgba(47,143,91,0.15); }
+    .type-input.wrong { border-color: var(--bad); box-shadow: 0 0 0 4px rgba(196,69,54,0.15); }
+
+    .feedback {
+      text-align: center;
+      min-height: 26px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-top: 6px;
+      transition: opacity 0.2s;
+    }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+
+    .quit-link {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-family: inherit;
+      width: 100%;
+      transition: color 0.15s;
+    }
+    .quit-link:hover { color: var(--accent); }
+
+    /* ===== RESULTS ===== */
+    .result-hero {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .result-score {
+      font-size: 3.4rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      transition: color 0.4s ease;
+    }
+    .result-score small { font-size: 1.4rem; color: var(--muted); font-weight: 600; transition: color 0.4s ease; }
+    .result-pct {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-top: 6px;
+      transition: color 0.4s ease;
+    }
+    .result-msg {
+      margin-top: 10px;
+      font-weight: 600;
+      transition: color 0.4s ease;
+    }
+    .stat-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .stat-box {
+      flex: 1;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      transition: background 0.4s ease;
+    }
+    .stat-box .num { font-size: 1.4rem; font-weight: 700; }
+    .stat-box .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.4s ease; }
+
+    .missed-head {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      transition: color 0.4s ease;
+    }
+    .missed-list {
+      list-style: none;
+      margin-bottom: 22px;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      transition: border-color 0.4s ease, background 0.4s ease;
+    }
+    .missed-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.95rem;
+      transition: border-color 0.4s ease;
+    }
+    .missed-list li:last-child { border-bottom: none; }
+    .missed-list .jp { font-size: 1.4rem; }
+    .missed-list .arrow { color: var(--muted); margin: 0 8px; transition: color 0.4s ease; }
+    .missed-list .ans { color: var(--good); font-weight: 600; }
+    .missed-empty {
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: color 0.4s ease;
+    }
+    .results-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 540px) {
+      .kana-display { font-size: 5.5rem; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .choice { font-size: 1.3rem; }
+      .card { padding: 24px 18px; }
+      .result-score { font-size: 2.8rem; }
+    }
+  </style>
+</head>
+<body data-theme="sunset">
+  <!-- Decor layers: petals, stars, clouds, moon, summer sun -->
+  <div class="petals" id="petals" aria-hidden="true"></div>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <div class="clouds" id="clouds" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <div class="summer-sun" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><span class="jp">かな</span> Kana Practice</div>
+      <div class="top-right">
+        <div class="theme-switch" id="themeSwitch" role="group" aria-label="Background theme">
+          <button class="swatch" data-theme="sunset" title="Sunset">🌅</button>
+          <button class="swatch" data-theme="night" title="Night">🌃</button>
+          <button class="swatch" data-theme="summer" title="Summer">☀️</button>
+        </div>
+        <div class="best" id="bestPill">Best: <b>—</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+
+      <!-- ========== SETUP SCREEN ========== -->
+      <section class="screen active" id="setupScreen">
+        <h1 class="section-title">Set up your practice</h1>
+        <p class="section-sub">Choose what to study and how you want to be quizzed.</p>
+
+        <div class="group">
+          <div class="group-label">Syllabary</div>
+          <div class="opts" id="syllOpts">
+            <button class="chip on" data-syll="hiragana">Hiragana ひらがな</button>
+            <button class="chip" data-syll="katakana">Katakana カタカナ</button>
+            <button class="chip" data-syll="both">Both</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Mode</div>
+          <div class="opts" id="modeOpts">
+            <button class="chip on" data-mode="choice">Multiple Choice</button>
+            <button class="chip" data-mode="type">Typing</button>
+            <button class="chip" data-mode="reverse">Reverse (Romaji → Kana)</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Kana set</div>
+          <div class="opts" id="levelOpts">
+            <button class="chip on" data-level="basic">Basic (46)</button>
+            <button class="chip" data-level="extended">Extended (dakuten/yōon)</button>
+            <button class="chip" data-level="both">Both</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Rows to include</div>
+          <div class="row-grid" id="rowGrid"></div>
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="chip small" id="rowsAll">Select all</button>
+            <button class="chip small" id="rowsNone">Clear</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Number of questions</div>
+          <div class="opts" id="countOpts">
+            <button class="chip on" data-count="10">10</button>
+            <button class="chip" data-count="20">20</button>
+            <button class="chip" data-count="all">All</button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="startBtn">Start Practice →</button>
+      </section>
+
+      <!-- ========== QUIZ SCREEN ========== -->
+      <section class="screen" id="quizScreen">
+        <div class="quizbar">
+          <span id="qProgress">Question 1 / 10</span>
+          <span>Score: <span class="score-pill" id="qScore">0</span></span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <div class="prompt-label" id="promptLabel"><span id="promptText">What is the romaji for this character?</span>
+          <button class="replay-btn" id="replayBtn" title="Hear it again" type="button">🔊</button>
+        </div>
+        <div class="kana-display jp" id="kanaDisplay" title="Tap to hear">あ</div>
+
+        <div class="choice-grid" id="choiceGrid"></div>
+        <div id="typeWrap" style="display:none;">
+          <input type="text" class="type-input" id="typeInput" placeholder="type romaji…" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        </div>
+
+        <div class="feedback" id="feedback">&nbsp;</div>
+
+        <button class="quit-link" id="quitBtn">End early & see results</button>
+      </section>
+
+      <!-- ========== RESULTS SCREEN ========== -->
+      <section class="screen" id="resultsScreen">
+        <div class="result-hero">
+          <div class="result-score"><span id="rScore">0</span><small>/<span id="rTotal">0</span></small></div>
+          <div class="result-pct" id="rPct">0% correct</div>
+          <div class="result-msg" id="rMsg"></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="num" id="sHira">—</div>
+            <div class="lbl">Hiragana</div>
+          </div>
+          <div class="stat-box">
+            <div class="num" id="sKata">—</div>
+            <div class="lbl">Katakana</div>
+          </div>
+          <div class="stat-box">
+            <div class="num" id="sBest">—</div>
+            <div class="lbl">Best %</div>
+          </div>
+        </div>
+
+        <div class="missed-head">Missed characters</div>
+        <ul class="missed-list" id="missedList"></ul>
+
+        <div class="results-actions">
+          <button class="btn btn-primary" id="retryBtn">Retry same setup</button>
+          <button class="btn btn-ghost" id="reviewMissedBtn">Practice missed only</button>
+          <button class="btn btn-ghost" id="homeBtn">Back to setup</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ============================================================
+       KANA DATASET
+       46 basic gojūon per syllabary, grouped by row.
+       romaji is the canonical spelling; extra accepted spellings
+       are listed in "alt" (for the typing mode).
+    ============================================================ */
+    const ROWS = [
+      { key: "vowel",   label: "あ a-row",     items: [
+        { h: "あ", k: "ア", r: "a" },
+        { h: "い", k: "イ", r: "i" },
+        { h: "う", k: "ウ", r: "u" },
+        { h: "え", k: "エ", r: "e" },
+        { h: "お", k: "オ", r: "o" }
+      ]},
+      { key: "k",       label: "か k-row",     items: [
+        { h: "か", k: "カ", r: "ka" },
+        { h: "き", k: "キ", r: "ki" },
+        { h: "く", k: "ク", r: "ku" },
+        { h: "け", k: "ケ", r: "ke" },
+        { h: "こ", k: "コ", r: "ko" }
+      ]},
+      { key: "s",       label: "さ s-row",     items: [
+        { h: "さ", k: "サ", r: "sa" },
+        { h: "し", k: "シ", r: "shi", alt: ["si"] },
+        { h: "す", k: "ス", r: "su" },
+        { h: "せ", k: "セ", r: "se" },
+        { h: "そ", k: "ソ", r: "so" }
+      ]},
+      { key: "t",       label: "た t-row",     items: [
+        { h: "た", k: "タ", r: "ta" },
+        { h: "ち", k: "チ", r: "chi", alt: ["ti"] },
+        { h: "つ", k: "ツ", r: "tsu", alt: ["tu"] },
+        { h: "て", k: "テ", r: "te" },
+        { h: "と", k: "ト", r: "to" }
+      ]},
+      { key: "n",       label: "な n-row",     items: [
+        { h: "な", k: "ナ", r: "na" },
+        { h: "に", k: "ニ", r: "ni" },
+        { h: "ぬ", k: "ヌ", r: "nu" },
+        { h: "ね", k: "ネ", r: "ne" },
+        { h: "の", k: "ノ", r: "no" }
+      ]},
+      { key: "h",       label: "は h-row",     items: [
+        { h: "は", k: "ハ", r: "ha" },
+        { h: "ひ", k: "ヒ", r: "hi" },
+        { h: "ふ", k: "フ", r: "fu",  alt: ["hu"] },
+        { h: "へ", k: "ヘ", r: "he" },
+        { h: "ほ", k: "ホ", r: "ho" }
+      ]},
+      { key: "m",       label: "ま m-row",     items: [
+        { h: "ま", k: "マ", r: "ma" },
+        { h: "み", k: "ミ", r: "mi" },
+        { h: "む", k: "ム", r: "mu" },
+        { h: "め", k: "メ", r: "me" },
+        { h: "も", k: "モ", r: "mo" }
+      ]},
+      { key: "y",       label: "や y-row",     items: [
+        { h: "や", k: "ヤ", r: "ya" },
+        { h: "ゆ", k: "ユ", r: "yu" },
+        { h: "よ", k: "ヨ", r: "yo" }
+      ]},
+      { key: "r",       label: "ら r-row",     items: [
+        { h: "ら", k: "ラ", r: "ra" },
+        { h: "り", k: "リ", r: "ri" },
+        { h: "る", k: "ル", r: "ru" },
+        { h: "れ", k: "レ", r: "re" },
+        { h: "ろ", k: "ロ", r: "ro" }
+      ]},
+      { key: "w",       label: "わ w-row",     items: [
+        { h: "わ", k: "ワ", r: "wa" },
+        { h: "を", k: "ヲ", r: "wo" },
+        { h: "ん", k: "ン", r: "n" }
+      ]},
+
+      /* ----- EXTENDED: dakuten, handakuten, yōon -----
+         flagged extended:true so they're hidden in "Basic" mode. */
+      { key: "g",  extended: true, label: "が g-row (dakuten)", items: [
+        { h: "が", k: "ガ", r: "ga" },
+        { h: "ぎ", k: "ギ", r: "gi" },
+        { h: "ぐ", k: "グ", r: "gu" },
+        { h: "げ", k: "ゲ", r: "ge" },
+        { h: "ご", k: "ゴ", r: "go" }
+      ]},
+      { key: "z",  extended: true, label: "ざ z-row (dakuten)", items: [
+        { h: "ざ", k: "ザ", r: "za" },
+        { h: "じ", k: "ジ", r: "ji", alt: ["zi"] },
+        { h: "ず", k: "ズ", r: "zu" },
+        { h: "ぜ", k: "ゼ", r: "ze" },
+        { h: "ぞ", k: "ゾ", r: "zo" }
+      ]},
+      { key: "d",  extended: true, label: "だ d-row (dakuten)", items: [
+        { h: "だ", k: "ダ", r: "da" },
+        { h: "ぢ", k: "ヂ", r: "ji", alt: ["di", "zi"] },
+        { h: "づ", k: "ヅ", r: "zu", alt: ["dzu", "du"] },
+        { h: "で", k: "デ", r: "de" },
+        { h: "ど", k: "ド", r: "do" }
+      ]},
+      { key: "b",  extended: true, label: "ば b-row (dakuten)", items: [
+        { h: "ば", k: "バ", r: "ba" },
+        { h: "び", k: "ビ", r: "bi" },
+        { h: "ぶ", k: "ブ", r: "bu" },
+        { h: "べ", k: "ベ", r: "be" },
+        { h: "ぼ", k: "ボ", r: "bo" }
+      ]},
+      { key: "p",  extended: true, label: "ぱ p-row (handakuten)", items: [
+        { h: "ぱ", k: "パ", r: "pa" },
+        { h: "ぴ", k: "ピ", r: "pi" },
+        { h: "ぷ", k: "プ", r: "pu" },
+        { h: "ぺ", k: "ペ", r: "pe" },
+        { h: "ぽ", k: "ポ", r: "po" }
+      ]},
+      { key: "yo", extended: true, label: "きゃ yōon (contracted)", items: [
+        { h: "きゃ", k: "キャ", r: "kya" },
+        { h: "きゅ", k: "キュ", r: "kyu" },
+        { h: "きょ", k: "キョ", r: "kyo" },
+        { h: "しゃ", k: "シャ", r: "sha", alt: ["sya"] },
+        { h: "しゅ", k: "シュ", r: "shu", alt: ["syu"] },
+        { h: "しょ", k: "ショ", r: "sho", alt: ["syo"] },
+        { h: "ちゃ", k: "チャ", r: "cha", alt: ["tya", "cya"] },
+        { h: "ちゅ", k: "チュ", r: "chu", alt: ["tyu", "cyu"] },
+        { h: "ちょ", k: "チョ", r: "cho", alt: ["tyo", "cyo"] },
+        { h: "にゃ", k: "ニャ", r: "nya" },
+        { h: "にゅ", k: "ニュ", r: "nyu" },
+        { h: "にょ", k: "ニョ", r: "nyo" },
+        { h: "ひゃ", k: "ヒャ", r: "hya" },
+        { h: "ひゅ", k: "ヒュ", r: "hyu" },
+        { h: "ひょ", k: "ヒョ", r: "hyo" },
+        { h: "みゃ", k: "ミャ", r: "mya" },
+        { h: "みゅ", k: "ミュ", r: "myu" },
+        { h: "みょ", k: "ミョ", r: "myo" },
+        { h: "りゃ", k: "リャ", r: "rya" },
+        { h: "りゅ", k: "リュ", r: "ryu" },
+        { h: "りょ", k: "リョ", r: "ryo" }
+      ]}
+    ];
+
+    /* ============================================================
+       STATE
+    ============================================================ */
+    const state = {
+      syll: "hiragana",     // hiragana | katakana | both
+      mode: "choice",       // choice | type | reverse
+      level: "basic",       // basic | extended | both  (controls extended rows)
+      selectedRows: new Set(ROWS.filter(r => !r.extended).map(r => r.key)),  // basic rows on by default
+      count: 10,            // 10 | 20 | "all"
+      pool: [],             // { kana, romaji, alt[], syllabary } built from setup
+      queue: [],            // shuffled working list
+      index: 0,
+      score: 0,
+      answered: false,
+      missed: [],           // { kana, romaji, syllabary, given }
+      stats: { hiragana: { right: 0, total: 0 }, katakana: { right: 0, total: 0 } }
+    };
+
+    /* ============================================================
+       DOM SHORTCUTS
+    ============================================================ */
+    const $ = (id) => document.getElementById(id);
+    const setupScreen = $("setupScreen");
+    const quizScreen  = $("quizScreen");
+    const resultsScreen = $("resultsScreen");
+
+    /* ============================================================
+       AUDIO — Japanese TTS via the Web Speech API.
+       Voices load async in some browsers, so cache once ready.
+    ============================================================ */
+    const synth = window.speechSynthesis;
+    let jpVoice = null;
+    function pickJpVoice() {
+      if (!synth || !synth.getVoices) return;
+      const voices = synth.getVoices();
+      jpVoice = voices.find(v => /ja[-_]JP/i.test(v.lang)) ||
+                voices.find(v => /^ja/i.test(v.lang)) ||
+                null;
+    }
+    if (synth) {
+      pickJpVoice();
+      synth.addEventListener && synth.addEventListener("voiceschanged", pickJpVoice);
+    }
+    function speak(text) {
+      if (!synth || !text) return;
+      try {
+        synth.cancel();                  // avoid overlapping utterances
+        const u = new SpeechSynthesisUtterance(text);
+        if (jpVoice) u.voice = jpVoice;
+        u.lang = "ja-JP";
+        u.rate = 0.9;
+        synth.speak(u);
+      } catch (e) { /* no-op */ }
+    }
+
+    /* ============================================================
+       SAKURA PETALS — flutter with random drift & sway per petal
+    ============================================================ */
+    (function spawnPetals() {
+      const layer = $("petals");
+      if (!layer) return;
+      const COUNT = 18;
+      for (let i = 0; i < COUNT; i++) {
+        const p = document.createElement("span");
+        const size = 10 + Math.random() * 16;            // 10–26px
+        const dur  = 9 + Math.random() * 12;             // 9–21s fall
+        const delay = -Math.random() * dur;              // negative = already mid-fall
+        const drift = -40 + Math.random() * 120;         // -40 to +80px horizontal
+        const sway  = -25 + Math.random() * 50;           // -25 to +25px oscillation
+        const swayDur = 3 + Math.random() * 3;           // 3–6s sway cycle
+        p.style.left = (Math.random() * 100) + "vw";
+        p.style.width = p.style.height = size + "px";
+        p.style.setProperty("--drift", drift + "px");
+        p.style.setProperty("--sway", sway);
+        p.style.animationDuration = dur + "s, " + swayDur + "s";
+        p.style.animationDelay = delay + "s, " + (-Math.random() * swayDur) + "s";
+        p.style.opacity = (0.45 + Math.random() * 0.55).toFixed(2);
+        layer.appendChild(p);
+      }
+    })();
+
+    /* ============================================================
+       STARS — twinkling dots with glow + 2 shooting stars
+    ============================================================ */
+    (function spawnStars() {
+      const layer = $("stars");
+      if (!layer) return;
+      const COUNT = 70;
+      for (let i = 0; i < COUNT; i++) {
+        const s = document.createElement("span");
+        // ~8 of the 70 get extra size + glow
+        const big = i < 8;
+        const size = big ? (2.5 + Math.random() * 2) : (1 + Math.random() * 1.5);
+        s.style.left = (Math.random() * 100) + "vw";
+        s.style.top  = (Math.random() * 100) + "vh";
+        s.style.width = s.style.height = size + "px";
+        s.style.animationDuration = (2 + Math.random() * 4) + "s";
+        s.style.animationDelay = (-Math.random() * 4) + "s";
+        if (big) {
+          s.classList.add("glow");
+          s.style.boxShadow = "0 0 " + (3 + Math.random() * 3) + "px " +
+                              (1 + Math.random() * 2) + "px rgba(200,210,255,0.4)";
+        }
+        layer.appendChild(s);
+      }
+      // 3 shooting stars — random start position, speed, and delay so meteors
+      // appear to streak across different parts of the sky at irregular intervals.
+      const SHOOTING = 3;
+      for (let i = 0; i < SHOOTING; i++) {
+        const ss = document.createElement("div");
+        ss.className = "shooting-star";
+        // start somewhere in the upper-left two-thirds so the 520px streak
+        // stays on-screen before fading out.
+        ss.style.top  = (5 + Math.random() * 45) + "%";   // 5%–50% from top
+        ss.style.left = (Math.random() * 45) + "%";       // 0%–45% from left
+        // each cycle takes ~9–16s; the streak itself is only ~3s of that,
+        // the rest is the "wait" between meteors.
+        const cycle = 9 + Math.random() * 7;
+        ss.style.animationDuration = cycle + "s";
+        // stagger the three so they don't all fire together
+        ss.style.animationDelay = (-(cycle * (i / SHOOTING)) - Math.random() * 2) + "s";
+        layer.appendChild(ss);
+      }
+    })();
+
+    /* ============================================================
+       CLOUDS — 3 slowly drifting puffy clouds (summer)
+    ============================================================ */
+    (function spawnClouds() {
+      const layer = $("clouds");
+      if (!layer) return;
+      for (let i = 0; i < 3; i++) {
+        const c = document.createElement("div");
+        c.className = "cloud";
+        layer.appendChild(c);
+      }
+    })();
+
+    /* ============================================================
+       THEME SWITCHER — sunset / night / summer, persisted
+    ============================================================ */
+    const THEME_KEY = "kanaPracticeTheme";
+    const VALID_THEMES = ["sunset", "night", "summer"];
+    function applyTheme(theme) {
+      if (!VALID_THEMES.includes(theme)) theme = "sunset";
+      document.body.setAttribute("data-theme", theme);
+      document.querySelectorAll(".swatch").forEach(b => {
+        b.classList.toggle("on", b.dataset.theme === theme);
+      });
+    }
+    (function initTheme() {
+      let saved = null;
+      try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+      applyTheme(saved);
+    })();
+    $("themeSwitch").addEventListener("click", (e) => {
+      const btn = e.target.closest(".swatch");
+      if (!btn) return;
+      const theme = btn.dataset.theme;
+      applyTheme(theme);
+      try { localStorage.setItem(THEME_KEY, theme); } catch (err) {}
+    });
+
+    /* ============================================================
+       SETUP SCREEN — option toggles
+    ============================================================ */
+    function bindOptGroup(containerId, dataKey) {
+      const container = $(containerId);
+      container.addEventListener("click", (e) => {
+        const btn = e.target.closest(".chip");
+        if (!btn) return;
+        container.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+        btn.classList.add("on");
+        const val = btn.dataset[dataKey];
+        if (dataKey === "count") state.count = (val === "all") ? "all" : parseInt(val, 10);
+        else state[dataKey] = val;
+      });
+    }
+    bindOptGroup("syllOpts", "syll");
+    bindOptGroup("modeOpts", "mode");
+    bindOptGroup("countOpts", "count");
+
+    // Level toggle (basic / extended / both) — controls which rows are visible.
+    $("levelOpts").addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      $("levelOpts").querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+      btn.classList.add("on");
+      state.level = btn.dataset.level;
+      rebuildRowGrid();
+    });
+
+    // A row is offered in the picker only when its tier matches the chosen level.
+    function rowIsVisible(row) {
+      if (state.level === "both") return true;
+      if (state.level === "extended") return !!row.extended;
+      return !row.extended; // basic
+    }
+
+    // Build row selector chips (rebuilt whenever the level changes)
+    const rowGrid = $("rowGrid");
+    function rebuildRowGrid() {
+      rowGrid.innerHTML = "";
+      ROWS.filter(rowIsVisible).forEach(row => {
+        const b = document.createElement("button");
+        const on = state.selectedRows.has(row.key);
+        b.className = "chip small" + (on ? " on" : "");
+        b.dataset.row = row.key;
+        b.innerHTML = '<span class="jp">' + row.label.split(" ")[0] + '</span> ' + row.label.split(" ")[1];
+        b.addEventListener("click", () => {
+          if (state.selectedRows.has(row.key)) {
+            state.selectedRows.delete(row.key);
+            b.classList.remove("on");
+          } else {
+            state.selectedRows.add(row.key);
+            b.classList.add("on");
+          }
+        });
+        rowGrid.appendChild(b);
+      });
+    }
+    rebuildRowGrid();
+    // When switching to extended/both, make sure extended rows are selectable by default.
+    $("rowsAll").addEventListener("click", () => {
+      ROWS.filter(rowIsVisible).forEach(r => state.selectedRows.add(r.key));
+      rowGrid.querySelectorAll(".chip").forEach(c => c.classList.add("on"));
+    });
+    $("rowsNone").addEventListener("click", () => {
+      ROWS.filter(rowIsVisible).forEach(r => state.selectedRows.delete(r.key));
+      rowGrid.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+    });
+
+    /* ============================================================
+       POOL BUILDING + SHUFFLE
+    ============================================================ */
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function buildPool() {
+      const pool = [];
+      const wantHira = state.syll === "hiragana" || state.syll === "both";
+      const wantKata = state.syll === "katakana" || state.syll === "both";
+      ROWS.forEach(row => {
+        if (!rowIsVisible(row)) return;          // honor current level
+        if (!state.selectedRows.has(row.key)) return;
+        row.items.forEach(it => {
+          if (wantHira) pool.push({ kana: it.h, romaji: it.r, alt: it.alt || [], syllabary: "hiragana" });
+          if (wantKata) pool.push({ kana: it.k, romaji: it.r, alt: it.alt || [], syllabary: "katakana" });
+        });
+      });
+      return pool;
+    }
+
+    function startQuiz(usePool) {
+      let pool = usePool || buildPool();
+      if (pool.length === 0) {
+        alert("Please select at least one row to practice.");
+        return;
+      }
+      state.pool = pool.slice();
+      shuffle(state.pool);
+      let n = state.count === "all" ? pool.length : Math.min(state.count, pool.length);
+      state.queue = state.pool.slice(0, n);
+      // If user asked for more than pool, repeat to fill (only when count is numeric & pool smaller)
+      if (state.count !== "all" && state.count > pool.length) {
+        while (state.queue.length < state.count && state.queue.length < pool.length * 3) {
+          state.queue.push(pool[Math.floor(Math.random() * pool.length)]);
+        }
+      }
+      state.index = 0;
+      state.score = 0;
+      state.missed = [];
+      state.stats = { hiragana: { right: 0, total: 0 }, katakana: { right: 0, total: 0 } };
+      showScreen(quizScreen);
+      renderQuestion();
+    }
+
+    /* ============================================================
+       SCREEN SWITCH
+    ============================================================ */
+    function showScreen(scr) {
+      [setupScreen, quizScreen, resultsScreen].forEach(s => s.classList.remove("active"));
+      scr.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* ============================================================
+       QUESTION RENDERING
+    ============================================================ */
+    const kanaDisplay = $("kanaDisplay");
+    const promptLabel = $("promptLabel");
+    const choiceGrid  = $("choiceGrid");
+    const typeWrap    = $("typeWrap");
+    const typeInput   = $("typeInput");
+    const feedbackEl  = $("feedback");
+
+    function renderQuestion() {
+      if (state.index >= state.queue.length) { finishQuiz(); return; }
+      const item = state.queue[state.index];
+      state.answered = false;
+      feedbackEl.textContent = "\u00a0";
+      feedbackEl.className = "feedback";
+
+      // bar + counters
+      $("qProgress").textContent = "Question " + (state.index + 1) + " / " + state.queue.length;
+      $("qScore").textContent = state.score;
+      $("progressFill").style.width = ((state.index / state.queue.length) * 100) + "%";
+
+      if (state.mode === "type") {
+        choiceGrid.style.display = "none";
+        typeWrap.style.display = "block";
+        $("promptText").textContent = "Type the romaji for this character:";
+        kanaDisplay.textContent = item.kana;
+        typeInput.value = "";
+        typeInput.className = "type-input";
+        setTimeout(() => typeInput.focus(), 30);
+      } else if (state.mode === "reverse") {
+        choiceGrid.style.display = "grid";
+        typeWrap.style.display = "none";
+        $("promptText").textContent = "Pick the kana that matches this romaji:";
+        kanaDisplay.textContent = item.romaji;
+        renderChoices(item, true);
+      } else { // choice
+        choiceGrid.style.display = "grid";
+        typeWrap.style.display = "none";
+        $("promptText").textContent = "What is the romaji for this character?";
+        kanaDisplay.textContent = item.kana;
+        renderChoices(item, false);
+      }
+      // In modes that show a kana, speak it once when the question appears.
+      if (state.mode !== "reverse") speak(item.kana);
+    }
+
+    // Build the 4 options. If reverse, options are kana from pool (matching the syllabary shown);
+    // otherwise options are romaji.
+    function renderChoices(item, reverse) {
+      choiceGrid.innerHTML = "";
+      const correctVal = reverse ? item.kana : item.romaji;
+      // Candidate distractors — same syllabary so kana/romaji options look coherent
+      const sameSyll = state.pool.filter(p => p.syllabary === item.syllabary);
+      const distractors = [];
+      const seen = new Set([correctVal]);
+      const tries = shuffle(sameSyll.slice());
+      for (const c of tries) {
+        const val = reverse ? c.kana : c.romaji;
+        if (!seen.has(val)) { seen.add(val); distractors.push(val); }
+        if (distractors.length >= 3) break;
+      }
+      const options = shuffle([correctVal, ...distractors]);
+      options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.innerHTML = '<span class="key">' + (i + 1) + '</span>' +
+                        (reverse ? '<span class="jp">' + opt + '</span>' : opt);
+        btn.addEventListener("click", () => handleChoice(btn, opt, correctVal, item));
+        choiceGrid.appendChild(btn);
+      });
+    }
+
+    /* ============================================================
+       ANSWER HANDLING
+    ============================================================ */
+    function recordResult(item, correct, given) {
+      state.stats[item.syllabary].total++;
+      if (correct) {
+        state.score++;
+        state.stats[item.syllabary].right++;
+      } else {
+        state.missed.push({ kana: item.kana, romaji: item.romaji, syllabary: item.syllabary, given: given });
+      }
+    }
+
+    function handleChoice(btn, picked, correctVal, item) {
+      if (state.answered) return;
+      state.answered = true;
+      const correct = (picked === correctVal);
+      // reveal
+      choiceGrid.querySelectorAll(".choice").forEach(c => {
+        c.classList.add("locked");
+        const text = reverseText(c);
+        if (text === correctVal) c.classList.add("correct");
+        else if (c === btn && !correct) c.classList.add("wrong");
+      });
+      recordResult(item, correct, picked);
+      showFeedback(correct, correctVal, item);
+      setTimeout(advance, correct ? 650 : 1200);
+    }
+
+    // For reverse mode the option text sits inside a .jp span; extract plain text.
+    function reverseText(btn) {
+      const jpSpan = btn.querySelector(".jp");
+      return jpSpan ? jpSpan.textContent : btn.textContent.replace(/^\d/, "").trim();
+    }
+
+    function handleType(e) {
+      if (e.key !== "Enter") return;
+      if (state.answered) { advance(); return; }
+      const item = state.queue[state.index];
+      const given = typeInput.value.trim().toLowerCase();
+      if (!given) return;
+      const accepted = [item.romaji, ...(item.alt || [])].map(s => s.toLowerCase());
+      const correct = accepted.includes(given);
+      state.answered = true;
+      typeInput.classList.add(correct ? "correct" : "wrong");
+      typeInput.disabled = true;
+      recordResult(item, correct, given);
+      showFeedback(correct, item.romaji, item);
+      setTimeout(() => { typeInput.disabled = false; advance(); }, correct ? 650 : 1200);
+    }
+
+    function showFeedback(correct, answer, item) {
+      feedbackEl.className = "feedback " + (correct ? "good" : "bad");
+      feedbackEl.textContent = correct
+        ? "✓ Correct!"
+        : "✗ Correct answer: " + answer;
+      // Speak the kana on reveal so every answered question gives audio feedback.
+      if (item && item.kana) speak(item.kana);
+    }
+
+    function advance() {
+      state.index++;
+      typeInput.disabled = false;
+      renderQuestion();
+    }
+
+    /* ============================================================
+       KEYBOARD SUPPORT
+    ============================================================ */
+    document.addEventListener("keydown", (e) => {
+      if (!quizScreen.classList.contains("active")) return;
+      // Typing mode: let the input handle Enter
+      if (state.mode === "type") return;
+      // Choice modes: 1-4 to pick
+      if (["1","2","3","4"].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btns = choiceGrid.querySelectorAll(".choice");
+        if (btns[idx]) btns[idx].click();
+      }
+    });
+    typeInput.addEventListener("keydown", handleType);
+
+    // Tap the big kana to hear it; 🔊 button replays the current question's kana.
+    kanaDisplay.addEventListener("click", () => {
+      const item = state.queue[state.index];
+      if (item && item.kana) speak(item.kana);
+    });
+    $("replayBtn").addEventListener("click", () => {
+      const item = state.queue[state.index];
+      if (item && item.kana) speak(item.kana);
+    });
+
+    /* ============================================================
+       FINISH + RESULTS
+    ============================================================ */
+    function finishQuiz() {
+      $("progressFill").style.width = "100%";
+      const total = state.queue.length;
+      const score = state.score;
+      const pct = total ? Math.round((score / total) * 100) : 0;
+      $("rScore").textContent = score;
+      $("rTotal").textContent = total;
+      $("rPct").textContent = pct + "% correct";
+
+      // Encouragement message
+      let msg = "";
+      if (pct === 100) msg = "Perfect! 完璧！";
+      else if (pct >= 80) msg = "Great work! よくできました！";
+      else if (pct >= 60) msg = "Good effort — keep going!";
+      else if (pct >= 40) msg = "Practice makes perfect. がんばって！";
+      else msg = "Keep at it — review the missed characters below.";
+      $("rMsg").textContent = msg;
+
+      // Per-syllabary stats
+      const sh = state.stats.hiragana;
+      const sk = state.stats.katakana;
+      $("sHira").textContent = sh.total ? sh.right + "/" + sh.total : "—";
+      $("sKata").textContent = sk.total ? sk.right + "/" + sk.total : "—";
+
+      // Persist + show best %
+      const best = saveBest(state.mode, pct);
+      $("sBest").textContent = best + "%";
+      refreshBestPill();
+
+      // Missed list
+      const list = $("missedList");
+      list.innerHTML = "";
+      if (state.missed.length === 0) {
+        const li = document.createElement("li");
+        li.className = "missed-empty";
+        li.textContent = "None — flawless run! 🎉";
+        list.appendChild(li);
+        $("reviewMissedBtn").style.display = "none";
+      } else {
+        $("reviewMissedBtn").style.display = "block";
+        state.missed.forEach(m => {
+          const li = document.createElement("li");
+          li.innerHTML = '<span><span class="jp">' + m.kana + '</span> <span class="arrow">→</span> ' +
+                         '<span class="ans">' + m.romaji + '</span></span>' +
+                         '<span style="color:var(--bad); font-size:0.85rem;">you: ' + escapeHtml(m.given) + '</span>';
+          list.appendChild(li);
+        });
+      }
+      showScreen(resultsScreen);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    }
+
+    /* ============================================================
+       PERSISTENCE — best % per mode in localStorage
+    ============================================================ */
+    const BEST_KEY = "kanaPracticeBest";
+    function readBests() {
+      try { return JSON.parse(localStorage.getItem(BEST_KEY) || "{}"); }
+      catch (e) { return {}; }
+    }
+    function saveBest(mode, pct) {
+      const b = readBests();
+      if (typeof b[mode] !== "number" || pct > b[mode]) b[mode] = pct;
+      try { localStorage.setItem(BEST_KEY, JSON.stringify(b)); } catch (e) {}
+      return b[mode];
+    }
+    function refreshBestPill() {
+      const b = readBests();
+      const modes = ["choice", "type", "reverse"];
+      let best = -1;
+      modes.forEach(m => { if (typeof b[m] === "number" && b[m] > best) best = b[m]; });
+      $("bestPill").innerHTML = "Best: <b>" + (best >= 0 ? best + "%" : "—") + "</b>";
+    }
+    refreshBestPill();
+
+    /* ============================================================
+       BUTTON WIRING
+    ============================================================ */
+    $("startBtn").addEventListener("click", () => startQuiz());
+    $("quitBtn").addEventListener("click", () => {
+      if (state.index < state.queue.length && !confirm("End the quiz early and see your results so far?")) return;
+      finishQuiz();
+    });
+    $("retryBtn").addEventListener("click", () => startQuiz());
+    $("reviewMissedBtn").addEventListener("click", () => {
+      if (state.missed.length === 0) return;
+      // Dedupe by kana+syllabary so a missed character practiced once
+      const seen = new Set();
+      const pool = [];
+      state.missed.forEach(m => {
+        const key = m.syllabary + ":" + m.kana;
+        if (!seen.has(key)) {
+          seen.add(key);
+          pool.push({ kana: m.kana, romaji: m.romaji, alt: altFor(m.kana, m.romaji), syllabary: m.syllabary });
+        }
+      });
+      startQuiz(pool);
+    });
+    $("homeBtn").addEventListener("click", () => showScreen(setupScreen));
+
+    // Helper: recover alt spellings for a missed item when building review pool
+    function altFor(kana, romaji) {
+      for (const row of ROWS) {
+        for (const it of row.items) {
+          if (it.h === kana || it.k === kana) return it.alt || [];
+        }
+      }
+      return [];
+    }
+
+  })();
+  </script>
+</body>
+</html>
