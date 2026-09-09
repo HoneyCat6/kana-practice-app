@@ -177,11 +177,100 @@
     body[data-theme="night"] .replay-btn:hover { border-color: rgba(255, 196, 107, 0.5); }
     /* night header chrome — dark glass */
     body[data-theme="night"] .top-right .theme-switch,
-    body[data-theme="night"] .top-right .best {
+    body[data-theme="night"] .top-right .best,
+    body[data-theme="night"] .top-right .chart-btn {
       background: rgba(255,255,255,0.08);
       border-color: rgba(255,255,255,0.12);
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .top-right .chart-btn:hover {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255, 196, 107, 0.5);
+      color: #ffc46b;
     }
     body[data-theme="night"] .swatch.on { background: rgba(255,255,255,0.2); }
+
+    /* night chart banner & modal */
+    body[data-theme="night"] .chart-banner {
+      background: rgba(255, 196, 107, 0.1);
+      border-color: rgba(255, 196, 107, 0.25);
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .chart-banner .btn-link {
+      color: #ffc46b;
+    }
+    body[data-theme="night"] .modal-overlay {
+      background: rgba(3, 6, 18, 0.82);
+    }
+    body[data-theme="night"] .modal-card {
+      background: rgba(14, 19, 46, 0.94);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65), 0 0 1px rgba(120, 140, 255, 0.2);
+    }
+    body[data-theme="night"] .modal-header,
+    body[data-theme="night"] .modal-controls {
+      border-bottom-color: rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    body[data-theme="night"] .modal-title {
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .modal-title .jp {
+      color: #ffc46b;
+    }
+    body[data-theme="night"] .modal-sub,
+    body[data-theme="night"] .modal-close {
+      color: #a7adcf;
+    }
+    body[data-theme="night"] .modal-close:hover {
+      color: #ffc46b;
+      background: rgba(255, 196, 107, 0.15);
+    }
+    body[data-theme="night"] .chart-search-input {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.14);
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .chart-search-input:focus {
+      border-color: #ffc46b;
+      box-shadow: 0 0 0 3px rgba(255, 196, 107, 0.18);
+    }
+    body[data-theme="night"] .chart-search-input::placeholder {
+      color: #6f75a0;
+    }
+    body[data-theme="night"] .chart-section-title {
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .chart-section-title::after {
+      background: rgba(255, 255, 255, 0.09);
+    }
+    body[data-theme="night"] .chart-tile {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    body[data-theme="night"] .chart-tile .tile-kana {
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .chart-tile .tile-romaji,
+    body[data-theme="night"] .chart-col-head,
+    body[data-theme="night"] .chart-row-label {
+      color: #a7adcf;
+    }
+    body[data-theme="night"] .chart-tile:hover {
+      border-color: #ffc46b;
+      box-shadow: 0 6px 18px rgba(255, 196, 107, 0.16);
+    }
+    body[data-theme="night"] .chart-tile.playing {
+      background: rgba(255, 196, 107, 0.2);
+      border-color: #ffc46b;
+    }
+    body[data-theme="night"] .chart-tile.highlight {
+      border-color: #ffc46b;
+      box-shadow: 0 0 0 2px #ffc46b, 0 4px 14px rgba(255, 196, 107, 0.25);
+    }
+    body[data-theme="night"] .chart-tile.empty {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
 
     /* =============================================
        THEME: SUMMER
@@ -218,6 +307,29 @@
       -webkit-backdrop-filter: blur(16px);
       border-color: rgba(255, 255, 255, 0.7);
       box-shadow: 0 12px 40px rgba(0, 40, 80, 0.12);
+    }
+    body[data-theme="summer"] .top-right .chart-btn {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    body[data-theme="summer"] .top-right .chart-btn:hover {
+      background: rgba(255, 255, 255, 0.45);
+      border-color: #fff;
+    }
+    body[data-theme="summer"] .chart-banner {
+      background: rgba(255, 255, 255, 0.5);
+      border-color: rgba(58, 159, 224, 0.25);
+    }
+    body[data-theme="summer"] .chart-banner .btn-link {
+      color: #1e70a8;
+    }
+    body[data-theme="summer"] .modal-card {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 24px 64px rgba(0, 40, 80, 0.18);
+    }
+    body[data-theme="summer"] .modal-controls {
+      background: rgba(240, 248, 255, 0.6);
     }
     /* summer petal tint — slightly warm pink */
     body[data-theme="summer"] .petals span {
@@ -418,6 +530,31 @@
       transition: background 0.4s ease, border-color 0.4s ease;
     }
     .best b { color: #fff; }
+    .chart-btn {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, transform 0.12s, border-color 0.2s;
+      font-family: inherit;
+    }
+    .chart-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-1px);
+    }
+    .chart-btn:active {
+      transform: translateY(0);
+    }
     .top-right {
       display: flex;
       align-items: center;
@@ -790,6 +927,337 @@
       gap: 10px;
     }
 
+    /* ===== CHART BANNER ===== */
+    .chart-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--accent-soft);
+      border: 1px solid rgba(196, 69, 54, 0.18);
+      border-radius: 10px;
+      padding: 11px 16px;
+      margin: 16px 0 24px;
+      font-size: 0.9rem;
+      gap: 12px;
+      flex-wrap: wrap;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    .chart-banner .btn-link {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.9rem;
+      transition: opacity 0.15s;
+    }
+    .chart-banner .btn-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* ===== MODAL OVERLAY & CARD ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(18, 12, 28, 0.68);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      box-shadow: 0 24px 64px rgba(25, 12, 38, 0.35);
+      width: 100%;
+      max-width: 820px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.96) translateY(12px);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.open .modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .modal-title .jp {
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+    .modal-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+    .modal-close:hover {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .modal-controls {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.5);
+    }
+    .chart-toggle-group {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chart-search-wrap {
+      flex: 1;
+      min-width: 180px;
+      max-width: 250px;
+    }
+    .chart-search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--line);
+      font-family: inherit;
+      font-size: 0.85rem;
+      background: var(--card);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .chart-search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(196, 69, 54, 0.12);
+    }
+
+    .chart-body {
+      padding: 20px 24px 28px;
+      overflow-y: auto;
+      flex: 1;
+      scroll-behavior: smooth;
+    }
+    .chart-body::-webkit-scrollbar {
+      width: 8px;
+    }
+    .chart-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chart-body::-webkit-scrollbar-thumb {
+      background: rgba(138, 131, 120, 0.3);
+      border-radius: 8px;
+    }
+    .chart-body::-webkit-scrollbar-thumb:hover {
+      background: rgba(138, 131, 120, 0.5);
+    }
+
+    .chart-section {
+      margin-bottom: 28px;
+    }
+    .chart-section:last-child {
+      margin-bottom: 8px;
+    }
+    .chart-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* Grid columns: Row label + 5 vowel columns */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 60px repeat(5, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+    .chart-grid.yoon-grid {
+      grid-template-columns: 64px repeat(3, 1fr);
+    }
+    .chart-col-head {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding-bottom: 4px;
+    }
+    .chart-row-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      white-space: nowrap;
+    }
+    .chart-row-label .jp {
+      font-size: 0.95rem;
+      margin-right: 4px;
+    }
+
+    /* Tile item */
+    .chart-tile {
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 4px 8px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      width: 100%;
+    }
+    .chart-tile:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(196, 69, 54, 0.12);
+    }
+    .chart-tile:active {
+      transform: translateY(0);
+    }
+    .chart-tile.empty {
+      background: transparent;
+      border: 1.5px dashed var(--line);
+      opacity: 0.3;
+      cursor: default;
+      pointer-events: none;
+      min-height: 58px;
+    }
+    .chart-tile .tile-kana {
+      font-size: 1.6rem;
+      line-height: 1.1;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .chart-tile .tile-romaji {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .chart-tile .tile-sound {
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      font-size: 0.65rem;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .chart-tile:hover .tile-sound {
+      opacity: 0.7;
+    }
+
+    /* Active audio playing ripple pulse */
+    @keyframes tilePulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(196, 69, 54, 0.6);
+        transform: scale(0.96);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(196, 69, 54, 0);
+        transform: scale(1.04);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(196, 69, 54, 0);
+        transform: scale(1);
+      }
+    }
+    .chart-tile.playing {
+      animation: tilePulse 0.5s ease-out;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .chart-tile.playing .tile-sound {
+      opacity: 1;
+    }
+
+    /* Filter & Search highlighting */
+    .chart-tile.dimmed {
+      opacity: 0.2;
+      filter: grayscale(0.8);
+      pointer-events: none;
+    }
+    .chart-tile.highlight {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent), 0 4px 14px rgba(196, 69, 54, 0.25);
+      transform: scale(1.04);
+      z-index: 2;
+    }
+    .chart-no-match {
+      padding: 30px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 540px) {
       .kana-display { font-size: 5.5rem; }
@@ -797,6 +1265,45 @@
       .choice { font-size: 1.3rem; }
       .card { padding: 24px 18px; }
       .result-score { font-size: 2.8rem; }
+      .modal-card {
+        max-height: 94vh;
+        border-radius: 14px;
+      }
+      .modal-header {
+        padding: 16px 16px 12px;
+      }
+      .modal-controls {
+        padding: 10px 16px;
+      }
+      .chart-body {
+        padding: 14px 12px;
+      }
+      .chart-grid {
+        grid-template-columns: 46px repeat(5, 1fr);
+        gap: 4px;
+      }
+      .chart-grid.yoon-grid {
+        grid-template-columns: 52px repeat(3, 1fr);
+        gap: 5px;
+      }
+      .chart-tile {
+        padding: 6px 2px 5px;
+        min-height: 48px;
+      }
+      .chart-tile .tile-kana {
+        font-size: 1.3rem;
+      }
+      .chart-tile .tile-romaji {
+        font-size: 0.68rem;
+      }
+      .chart-row-label {
+        font-size: 0.7rem;
+        padding-right: 4px;
+      }
+      .chart-search-wrap {
+        max-width: 100%;
+        min-width: 100%;
+      }
     }
   </style>
 </head>
@@ -812,6 +1319,9 @@
     <div class="top">
       <div class="brand"><span class="jp">かな</span> Kana Practice</div>
       <div class="top-right">
+        <button class="chart-btn" id="openChartBtn" title="Open Kana Reference Chart" type="button">
+          <span>📖</span> Chart
+        </button>
         <div class="theme-switch" id="themeSwitch" role="group" aria-label="Background theme">
           <button class="swatch" data-theme="sunset" title="Sunset">🌅</button>
           <button class="swatch" data-theme="night" title="Night">🌃</button>
@@ -827,6 +1337,11 @@
       <section class="screen active" id="setupScreen">
         <h1 class="section-title">Set up your practice</h1>
         <p class="section-sub">Choose what to study and how you want to be quizzed.</p>
+
+        <div class="chart-banner">
+          <span>Need a refresher on character sounds?</span>
+          <button type="button" class="btn-link" id="setupChartBtn">Review Kana Chart (五十音図) ↗</button>
+        </div>
 
         <div class="group">
           <div class="group-label">Syllabary</div>
@@ -932,6 +1447,44 @@
         </div>
       </section>
 
+    </div>
+  </div>
+
+  <!-- ========== KANA REFERENCE CHART MODAL ========== -->
+  <div class="modal-overlay" id="chartModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="chartModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="chartModalTitle"><span class="jp">五十音図</span> Kana Chart</h2>
+          <p class="modal-sub">Click any character to hear native pronunciation</p>
+        </div>
+        <button class="modal-close" id="closeChartBtn" title="Close chart" type="button" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-controls">
+        <!-- Syllabary switcher -->
+        <div class="chart-toggle-group" id="chartSyllToggle">
+          <button class="chip on" data-syll="hiragana" type="button">Hiragana ひらがな</button>
+          <button class="chip" data-syll="katakana" type="button">Katakana カタカナ</button>
+        </div>
+
+        <!-- Category filter -->
+        <div class="chart-toggle-group" id="chartCategoryToggle">
+          <button class="chip small on" data-cat="all" type="button">All</button>
+          <button class="chip small" data-cat="basic" type="button">Basic (46)</button>
+          <button class="chip small" data-cat="dakuten" type="button">Dakuten (25)</button>
+          <button class="chip small" data-cat="yoon" type="button">Yōon (33)</button>
+        </div>
+
+        <!-- Search / Filter -->
+        <div class="chart-search-wrap">
+          <input type="text" class="chart-search-input" id="chartSearchInput" placeholder="Filter romaji (e.g. ka, shi)..." autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
+
+      <div class="chart-body" id="chartContent">
+        <!-- Dynamically rendered Gojūon tables -->
+      </div>
     </div>
   </div>
 
@@ -1071,7 +1624,19 @@
         { h: "みょ", k: "ミョ", r: "myo" },
         { h: "りゃ", k: "リャ", r: "rya" },
         { h: "りゅ", k: "リュ", r: "ryu" },
-        { h: "りょ", k: "リョ", r: "ryo" }
+        { h: "りょ", k: "リョ", r: "ryo" },
+        { h: "ぎゃ", k: "ギャ", r: "gya" },
+        { h: "ぎゅ", k: "ギュ", r: "gyu" },
+        { h: "ぎょ", k: "ギョ", r: "gyo" },
+        { h: "じゃ", k: "ジャ", r: "ja", alt: ["zya", "jya"] },
+        { h: "じゅ", k: "ジュ", r: "ju", alt: ["zyu", "jyu"] },
+        { h: "じょ", k: "ジョ", r: "jo", alt: ["zyo", "jyo"] },
+        { h: "びゃ", k: "ビャ", r: "bya" },
+        { h: "びゅ", k: "ビュ", r: "byu" },
+        { h: "びょ", k: "ビョ", r: "byo" },
+        { h: "ぴゃ", k: "ピャ", r: "pya" },
+        { h: "ぴゅ", k: "ピュ", r: "pyu" },
+        { h: "ぴょ", k: "ピョ", r: "pyo" }
       ]}
     ];
 
@@ -1509,6 +2074,10 @@
        KEYBOARD SUPPORT
     ============================================================ */
     document.addEventListener("keydown", (e) => {
+      if (chartModal && chartModal.classList.contains("open")) {
+        if (e.key === "Escape") closeChartModal();
+        return;
+      }
       if (!quizScreen.classList.contains("active")) return;
       // Typing mode: let the input handle Enter
       if (state.mode === "type") return;
@@ -1646,6 +2215,335 @@
       }
       return [];
     }
+
+    /* ============================================================
+       INTERACTIVE KANA REFERENCE CHART (五十音図)
+    ============================================================ */
+    const chartModal = $("chartModal");
+    const openChartBtn = $("openChartBtn");
+    const setupChartBtn = $("setupChartBtn");
+    const closeChartBtn = $("closeChartBtn");
+    const chartSyllToggle = $("chartSyllToggle");
+    const chartCategoryToggle = $("chartCategoryToggle");
+    const chartSearchInput = $("chartSearchInput");
+    const chartContent = $("chartContent");
+
+    let chartSyll = "hiragana"; // hiragana | katakana
+    let chartCat = "all";       // all | basic | dakuten | yoon
+    let chartSearch = "";
+
+    const KANA_MAP = {
+      // Basic Gojuon
+      a: { h: "あ", k: "ア", r: "a" },
+      i: { h: "い", k: "イ", r: "i" },
+      u: { h: "う", k: "ウ", r: "u" },
+      e: { h: "え", k: "エ", r: "e" },
+      o: { h: "お", k: "オ", r: "o" },
+      ka: { h: "か", k: "カ", r: "ka" },
+      ki: { h: "き", k: "キ", r: "ki" },
+      ku: { h: "く", k: "ク", r: "ku" },
+      ke: { h: "け", k: "ケ", r: "ke" },
+      ko: { h: "こ", k: "コ", r: "ko" },
+      sa: { h: "さ", k: "サ", r: "sa" },
+      shi: { h: "し", k: "シ", r: "shi" },
+      su: { h: "す", k: "ス", r: "su" },
+      se: { h: "せ", k: "セ", r: "se" },
+      so: { h: "そ", k: "ソ", r: "so" },
+      ta: { h: "た", k: "タ", r: "ta" },
+      chi: { h: "ち", k: "チ", r: "chi" },
+      tsu: { h: "つ", k: "ツ", r: "tsu" },
+      te: { h: "て", k: "テ", r: "te" },
+      to: { h: "と", k: "ト", r: "to" },
+      na: { h: "な", k: "ナ", r: "na" },
+      ni: { h: "に", k: "ニ", r: "ni" },
+      nu: { h: "ぬ", k: "ヌ", r: "nu" },
+      ne: { h: "ね", k: "ネ", r: "ne" },
+      no: { h: "の", k: "ノ", r: "no" },
+      ha: { h: "は", k: "ハ", r: "ha" },
+      hi: { h: "ひ", k: "ヒ", r: "hi" },
+      fu: { h: "ふ", k: "フ", r: "fu" },
+      he: { h: "へ", k: "ヘ", r: "he" },
+      ho: { h: "ほ", k: "ホ", r: "ho" },
+      ma: { h: "ま", k: "マ", r: "ma" },
+      mi: { h: "み", k: "ミ", r: "mi" },
+      mu: { h: "む", k: "ム", r: "mu" },
+      me: { h: "め", k: "メ", r: "me" },
+      mo: { h: "も", k: "モ", r: "mo" },
+      ya: { h: "や", k: "ヤ", r: "ya" },
+      yu: { h: "ゆ", k: "ユ", r: "yu" },
+      yo: { h: "よ", k: "ヨ", r: "yo" },
+      ra: { h: "ら", k: "ラ", r: "ra" },
+      ri: { h: "り", k: "リ", r: "ri" },
+      ru: { h: "る", k: "ル", r: "ru" },
+      re: { h: "れ", k: "レ", r: "re" },
+      ro: { h: "ろ", k: "ロ", r: "ro" },
+      wa: { h: "わ", k: "ワ", r: "wa" },
+      wo: { h: "を", k: "ヲ", r: "wo" },
+      n:  { h: "ん", k: "ン", r: "n" },
+
+      // Dakuten & Handakuten
+      ga: { h: "が", k: "ガ", r: "ga" },
+      gi: { h: "ぎ", k: "ギ", r: "gi" },
+      gu: { h: "ぐ", k: "グ", r: "gu" },
+      ge: { h: "げ", k: "ゲ", r: "ge" },
+      go: { h: "ご", k: "ゴ", r: "go" },
+      za: { h: "ざ", k: "ザ", r: "za" },
+      ji: { h: "じ", k: "ジ", r: "ji" },
+      zu: { h: "ず", k: "ズ", r: "zu" },
+      ze: { h: "ぜ", k: "ゼ", r: "ze" },
+      zo: { h: "ぞ", k: "ゾ", r: "zo" },
+      da: { h: "だ", k: "ダ", r: "da" },
+      d_ji: { h: "ぢ", k: "ヂ", r: "ji (di)" },
+      d_zu: { h: "づ", k: "ヅ", r: "zu (du)" },
+      de: { h: "で", k: "デ", r: "de" },
+      do: { h: "ど", k: "ド", r: "do" },
+      ba: { h: "ば", k: "バ", r: "ba" },
+      bi: { h: "び", k: "ビ", r: "bi" },
+      bu: { h: "ぶ", k: "ブ", r: "bu" },
+      be: { h: "べ", k: "ベ", r: "be" },
+      bo: { h: "ぼ", k: "ボ", r: "bo" },
+      pa: { h: "ぱ", k: "パ", r: "pa" },
+      pi: { h: "ぴ", k: "ピ", r: "pi" },
+      pu: { h: "ぷ", k: "プ", r: "pu" },
+      pe: { h: "ぺ", k: "ペ", r: "pe" },
+      po: { h: "ぽ", k: "ポ", r: "po" },
+
+      // Yoon (Contracted)
+      kya: { h: "きゃ", k: "キャ", r: "kya" },
+      kyu: { h: "きゅ", k: "キュ", r: "kyu" },
+      kyo: { h: "きょ", k: "キョ", r: "kyo" },
+      sha: { h: "しゃ", k: "シャ", r: "sha" },
+      shu: { h: "しゅ", k: "シュ", r: "shu" },
+      sho: { h: "しょ", k: "ショ", r: "sho" },
+      cha: { h: "ちゃ", k: "チャ", r: "cha" },
+      chu: { h: "ちゅ", k: "チュ", r: "chu" },
+      cho: { h: "ちょ", k: "チョ", r: "cho" },
+      nya: { h: "にゃ", k: "ニャ", r: "nya" },
+      nyu: { h: "にゅ", k: "ニュ", r: "nyu" },
+      nyo: { h: "にょ", k: "ニョ", r: "nyo" },
+      hya: { h: "ひゃ", k: "ヒャ", r: "hya" },
+      hyu: { h: "ひゅ", k: "ヒュ", r: "hyu" },
+      hyo: { h: "ひょ", k: "ヒョ", r: "hyo" },
+      mya: { h: "みゃ", k: "ミャ", r: "mya" },
+      myu: { h: "みゅ", k: "ミュ", r: "myu" },
+      myo: { h: "みょ", k: "ミョ", r: "myo" },
+      rya: { h: "りゃ", k: "リャ", r: "rya" },
+      ryu: { h: "りゅ", k: "リュ", r: "ryu" },
+      ryo: { h: "りょ", k: "リョ", r: "ryo" },
+      gya: { h: "ぎゃ", k: "ギャ", r: "gya" },
+      gyu: { h: "ぎゅ", k: "ギュ", r: "gyu" },
+      gyo: { h: "ぎょ", k: "ギョ", r: "gyo" },
+      ja:  { h: "じゃ", k: "ジャ", r: "ja" },
+      ju:  { h: "じゅ", k: "ジュ", r: "ju" },
+      jo:  { h: "じょ", k: "ジョ", r: "jo" },
+      bya: { h: "びゃ", k: "ビャ", r: "bya" },
+      byu: { h: "びゅ", k: "ビュ", r: "byu" },
+      byo: { h: "びょ", k: "ビョ", r: "byo" },
+      pya: { h: "ぴゃ", k: "ピャ", r: "pya" },
+      pyu: { h: "ぴゅ", k: "ピュ", r: "pyu" },
+      pyo: { h: "ぴょ", k: "ピョ", r: "pyo" }
+    };
+
+    const CHART_BASIC_ROWS = [
+      { label: "a",  jp: "あ行", keys: ["a", "i", "u", "e", "o"] },
+      { label: "ka", jp: "か行", keys: ["ka", "ki", "ku", "ke", "ko"] },
+      { label: "sa", jp: "さ行", keys: ["sa", "shi", "su", "se", "so"] },
+      { label: "ta", jp: "た行", keys: ["ta", "chi", "tsu", "te", "to"] },
+      { label: "na", jp: "な行", keys: ["na", "ni", "nu", "ne", "no"] },
+      { label: "ha", jp: "は行", keys: ["ha", "hi", "fu", "he", "ho"] },
+      { label: "ma", jp: "ま行", keys: ["ma", "mi", "mu", "me", "mo"] },
+      { label: "ya", jp: "や行", keys: ["ya", null, "yu", null, "yo"] },
+      { label: "ra", jp: "ら行", keys: ["ra", "ri", "ru", "re", "ro"] },
+      { label: "wa", jp: "わ行", keys: ["wa", null, null, null, "wo"] },
+      { label: "n",  jp: "ん",   keys: ["n", null, null, null, null] }
+    ];
+
+    const CHART_DAKUTEN_ROWS = [
+      { label: "ga", jp: "が行", keys: ["ga", "gi", "gu", "ge", "go"] },
+      { label: "za", jp: "ざ行", keys: ["za", "ji", "zu", "ze", "zo"] },
+      { label: "da", jp: "だ行", keys: ["da", "d_ji", "d_zu", "de", "do"] },
+      { label: "ba", jp: "ば行", keys: ["ba", "bi", "bu", "be", "bo"] },
+      { label: "pa", jp: "ぱ行", keys: ["pa", "pi", "pu", "pe", "po"] }
+    ];
+
+    const CHART_YOON_ROWS = [
+      { label: "ky", jp: "きゃ", keys: ["kya", "kyu", "kyo"] },
+      { label: "sh", jp: "しゃ", keys: ["sha", "shu", "sho"] },
+      { label: "ch", jp: "ちゃ", keys: ["cha", "chu", "cho"] },
+      { label: "ny", jp: "にゃ", keys: ["nya", "nyu", "nyo"] },
+      { label: "hy", jp: "ひゃ", keys: ["hya", "hyu", "hyo"] },
+      { label: "my", jp: "みゃ", keys: ["mya", "myu", "myo"] },
+      { label: "ry", jp: "りゃ", keys: ["rya", "ryu", "ryo"] },
+      { label: "gy", jp: "ぎゃ", keys: ["gya", "gyu", "gyo"] },
+      { label: "j",  jp: "じゃ", keys: ["ja", "ju", "jo"] },
+      { label: "by", jp: "びゃ", keys: ["bya", "byu", "byo"] },
+      { label: "py", jp: "ぴゃ", keys: ["pya", "pyu", "pyo"] }
+    ];
+
+    function createChartTile(key) {
+      if (!key || !KANA_MAP[key]) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "chart-tile empty";
+        emptyDiv.setAttribute("aria-hidden", "true");
+        return emptyDiv;
+      }
+      const item = KANA_MAP[key];
+      const char = chartSyll === "katakana" ? item.k : item.h;
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "chart-tile";
+      tile.dataset.key = key;
+      tile.dataset.kana = char;
+      tile.dataset.romaji = item.r;
+      tile.setAttribute("title", char + " (" + item.r + ") — Click to hear");
+
+      tile.innerHTML = '<span class="tile-sound">🔊</span>' +
+                       '<span class="tile-kana jp">' + char + '</span>' +
+                       '<span class="tile-romaji">' + item.r + '</span>';
+
+      tile.addEventListener("click", () => {
+        speak(char);
+        tile.classList.remove("playing");
+        void tile.offsetWidth;
+        tile.classList.add("playing");
+        setTimeout(() => tile.classList.remove("playing"), 550);
+      });
+
+      return tile;
+    }
+
+    function buildChartSection(title, countText, rows, colHeaders, isYoon) {
+      const sec = document.createElement("section");
+      sec.className = "chart-section";
+
+      const h = document.createElement("h3");
+      h.className = "chart-section-title";
+      h.innerHTML = '<span>' + escapeHtml(title) + '</span>' +
+                    '<span style="font-size:0.75rem; font-weight:500; color:var(--muted); text-transform:none;">' + escapeHtml(countText) + '</span>';
+      sec.appendChild(h);
+
+      const grid = document.createElement("div");
+      grid.className = "chart-grid" + (isYoon ? " yoon-grid" : "");
+
+      const corner = document.createElement("div");
+      grid.appendChild(corner);
+
+      colHeaders.forEach(ch => {
+        const head = document.createElement("div");
+        head.className = "chart-col-head";
+        head.textContent = ch;
+        grid.appendChild(head);
+      });
+
+      rows.forEach(r => {
+        const lbl = document.createElement("div");
+        lbl.className = "chart-row-label";
+        lbl.innerHTML = '<span class="jp">' + r.jp + '</span> <span>' + r.label + '</span>';
+        grid.appendChild(lbl);
+
+        r.keys.forEach(k => {
+          grid.appendChild(createChartTile(k));
+        });
+      });
+
+      sec.appendChild(grid);
+      return sec;
+    }
+
+    function renderChart() {
+      chartContent.innerHTML = "";
+      const showBasic = chartCat === "all" || chartCat === "basic";
+      const showDakuten = chartCat === "all" || chartCat === "dakuten";
+      const showYoon = chartCat === "all" || chartCat === "yoon";
+
+      if (showBasic) {
+        chartContent.appendChild(buildChartSection("Basic Gojūon (五十音図)", "46 characters", CHART_BASIC_ROWS, ["a", "i", "u", "e", "o"]));
+      }
+      if (showDakuten) {
+        chartContent.appendChild(buildChartSection("Dakuten & Handakuten (濁音・半濁音)", "25 characters (voiced / p-sounds)", CHART_DAKUTEN_ROWS, ["a", "i", "u", "e", "o"]));
+      }
+      if (showYoon) {
+        chartContent.appendChild(buildChartSection("Contracted Sounds (拗音)", "33 compound characters", CHART_YOON_ROWS, ["ya", "yu", "yo"], true));
+      }
+
+      const noMatch = document.createElement("div");
+      noMatch.id = "chartNoMatch";
+      noMatch.className = "chart-no-match";
+      noMatch.style.display = "none";
+      noMatch.textContent = "No matching characters found.";
+      chartContent.appendChild(noMatch);
+
+      applyChartSearch();
+    }
+
+    function applyChartSearch() {
+      const q = chartSearch.trim().toLowerCase();
+      const tiles = chartContent.querySelectorAll(".chart-tile:not(.empty)");
+      let matchCount = 0;
+      tiles.forEach(tile => {
+        const char = tile.dataset.kana || "";
+        const r = (tile.dataset.romaji || "").toLowerCase();
+        const key = (tile.dataset.key || "").toLowerCase();
+        const match = !q || char.includes(q) || r.includes(q) || key.includes(q);
+        tile.classList.toggle("highlight", !!q && match);
+        tile.classList.toggle("dimmed", !!q && !match);
+        if (match) matchCount++;
+      });
+      const emptyNotice = $("chartNoMatch");
+      if (emptyNotice) {
+        emptyNotice.style.display = (q && matchCount === 0) ? "block" : "none";
+      }
+    }
+
+    function openChartModal() {
+      renderChart();
+      chartModal.classList.add("open");
+      chartModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      setTimeout(() => {
+        if (chartSearchInput) chartSearchInput.focus();
+      }, 80);
+    }
+
+    function closeChartModal() {
+      chartModal.classList.remove("open");
+      chartModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if (chartSearchInput) {
+        chartSearchInput.value = "";
+        chartSearch = "";
+      }
+    }
+
+    openChartBtn.addEventListener("click", openChartModal);
+    setupChartBtn.addEventListener("click", openChartModal);
+    closeChartBtn.addEventListener("click", closeChartModal);
+    chartModal.addEventListener("click", (e) => {
+      if (e.target === chartModal) closeChartModal();
+    });
+
+    chartSyllToggle.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      chartSyllToggle.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+      btn.classList.add("on");
+      chartSyll = btn.dataset.syll;
+      renderChart();
+    });
+
+    chartCategoryToggle.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      chartCategoryToggle.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+      btn.classList.add("on");
+      chartCat = btn.dataset.cat;
+      renderChart();
+    });
+
+    chartSearchInput.addEventListener("input", (e) => {
+      chartSearch = e.target.value;
+      applyChartSearch();
+    });
 
   })();
   </script>
