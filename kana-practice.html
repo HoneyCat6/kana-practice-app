@@ -18,6 +18,8 @@
       --good-soft: #e2f3e9;
       --bad: #c44536;
       --bad-soft: #fbe9e6;
+      --warn: #d9902f;
+      --chart: var(--accent);
       --shadow: 0 6px 24px rgba(43, 39, 34, 0.06);
       --radius: 14px;
     }
@@ -82,6 +84,7 @@
        glow, twinkling stars, shooting stars.
     ============================================= */
     body[data-theme="night"] {
+      --chart: #ffc46b;
       background:
         radial-gradient(ellipse at 50% 100%, rgba(30, 25, 80, 0.6) 0%, transparent 60%),
         linear-gradient(180deg, #050816 0%, #0c1330 45%, #1a1f4a 100%);
@@ -129,21 +132,15 @@
     body[data-theme="night"] .section-sub,
     body[data-theme="night"] .group-label,
     body[data-theme="night"] .quizbar,
-    body[data-theme="night"] .result-pct,
     body[data-theme="night"] .result-msg,
-    body[data-theme="night"] .stat-box .lbl,
     body[data-theme="night"] .missed-head,
     body[data-theme="night"] .missed-empty,
     body[data-theme="night"] .quit-link,
     body[data-theme="night"] h1.section-title { color: #f4f5ff; }
     body[data-theme="night"] .section-sub,
-    body[data-theme="night"] .group-label,
-    body[data-theme="night"] .stat-box .lbl { color: #a7adcf; }
-    body[data-theme="night"] .result-score { color: #ffc46b; }
-    body[data-theme="night"] .result-score small { color: #a7adcf; }
+    body[data-theme="night"] .group-label { color: #a7adcf; }
     body[data-theme="night"] #promptText,
     body[data-theme="night"] .feedback.bad { color: #ffb4b4; }
-    body[data-theme="night"] .stat-box { background: rgba(255,255,255,0.04); }
     body[data-theme="night"] .missed-list { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
     body[data-theme="night"] .missed-list li { border-color: rgba(255,255,255,0.08); }
     body[data-theme="night"] .missed-list .arrow { color: #6b70a0; }
@@ -844,45 +841,369 @@
     }
     .quit-link:hover { color: var(--accent); }
 
-    /* ===== RESULTS ===== */
-    .result-hero {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .result-score {
-      font-size: 3.4rem;
-      font-weight: 800;
-      color: var(--accent);
-      line-height: 1;
-      transition: color 0.4s ease;
-    }
-    .result-score small { font-size: 1.4rem; color: var(--muted); font-weight: 600; transition: color 0.4s ease; }
-    .result-pct {
-      font-size: 1.1rem;
-      color: var(--muted);
-      margin-top: 6px;
-      transition: color 0.4s ease;
-    }
+    /* ===== SESSION DASHBOARD (results screen) ===== */
     .result-msg {
       margin-top: 10px;
       font-weight: 600;
+      text-align: right;
       transition: color 0.4s ease;
     }
-    .stat-row {
+    .dash-head {
       display: flex;
-      gap: 12px;
-      margin-bottom: 22px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
-    .stat-box {
-      flex: 1;
+    .dash-head .section-sub { margin-bottom: 0; }
+    .dash-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .dash-meta span {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
       background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 50px;
+      padding: 3px 9px;
+      transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+    }
+    .dash-meta span.early {
+      color: var(--bad);
+      background: var(--bad-soft);
+      border-color: rgba(196, 69, 54, 0.25);
+    }
+
+    /* --- overview: accuracy ring + KPI tiles --- */
+    .dash-overview {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .ring-card {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    .ring-wrap { position: relative; width: 134px; height: 134px; }
+    .ring-svg { display: block; width: 100%; height: 100%; }
+    .ring-track {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 10;
+      transition: stroke 0.4s ease;
+    }
+    .ring-fill {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.1s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease;
+    }
+    .ring-fill[data-tone="good"] { stroke: var(--good); }
+    .ring-fill[data-tone="mid"] { stroke: var(--warn); }
+    .ring-fill[data-tone="low"] { stroke: var(--bad); }
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring-pct {
+      font-size: 1.9rem;
+      font-weight: 800;
+      line-height: 1;
+      transition: color 0.4s ease;
+    }
+    .ring-label {
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-top: 4px;
+      transition: color 0.4s ease;
+    }
+    .ring-foot {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: color 0.4s ease;
+    }
+    .ring-foot b { color: var(--ink); transition: color 0.4s ease; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .kpi {
+      background: var(--bg);
+      border: 1px solid var(--line);
       border-radius: 10px;
-      padding: 14px;
+      padding: 14px 8px;
       text-align: center;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    .kpi-num { font-size: 1.3rem; font-weight: 800; line-height: 1.2; transition: color 0.4s ease; }
+    .kpi-num.good { color: var(--good); }
+    .kpi-num.bad { color: var(--bad); }
+    .kpi-lbl {
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-top: 3px;
+      transition: color 0.4s ease;
+    }
+
+    /* --- dashboard panels --- */
+    .dash-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: border-color 0.4s ease, background 0.4s ease;
+    }
+    .dash-card-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .dash-card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.4s ease;
+    }
+    .dash-card-sub {
+      font-size: 0.74rem;
+      color: var(--muted);
+      transition: color 0.4s ease;
+    }
+    .dash-empty {
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: color 0.4s ease;
+    }
+
+    /* --- running score chart --- */
+    .score-chart { display: block; width: 100%; height: auto; }
+    .chart-grid-line {
+      stroke: var(--line);
+      stroke-width: 1;
+      stroke-dasharray: 3 5;
+      transition: stroke 0.4s ease;
+    }
+    .chart-baseline { stroke: var(--line); stroke-width: 1; transition: stroke 0.4s ease; }
+    .chart-axis-text {
+      fill: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: fill 0.4s ease;
+    }
+    .chart-area { fill: url(#scoreAreaGrad); }
+    .chart-line {
+      fill: none;
+      stroke: var(--chart);
+      stroke-width: 2.5;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      transition: stroke 0.4s ease;
+    }
+    .chart-dot { stroke: var(--card); stroke-width: 1.5; transition: stroke 0.4s ease; }
+    .chart-dot.ok { fill: var(--good); }
+    .chart-dot.no { fill: var(--bad); }
+
+    /* --- answer timeline --- */
+    .answer-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+      gap: 6px;
+    }
+    .ans-chip {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      background: var(--card);
+      transition: transform 0.12s ease, background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+    }
+    .ans-chip .jp { font-size: 1.05rem; line-height: 1.1; }
+    .ans-chip .ans-idx { font-size: 0.55rem; font-weight: 700; color: var(--muted); transition: color 0.4s ease; }
+    .ans-chip.ok { background: var(--good-soft); border-color: rgba(47, 143, 91, 0.45); color: var(--good); }
+    .ans-chip.no { background: var(--bad-soft); border-color: rgba(196, 69, 54, 0.45); color: var(--bad); }
+    .ans-chip:hover { transform: translateY(-2px); }
+
+    /* --- accuracy by row + syllabary split --- */
+    .row-acc { display: grid; gap: 9px; }
+    .row-acc-item {
+      display: grid;
+      grid-template-columns: 104px 1fr 64px;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+    .row-acc-lbl {
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.4s ease;
+    }
+    .row-acc-track {
+      height: 8px;
+      border-radius: 50px;
+      background: var(--line);
+      overflow: hidden;
       transition: background 0.4s ease;
     }
-    .stat-box .num { font-size: 1.4rem; font-weight: 700; }
-    .stat-box .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.4s ease; }
+    .row-acc-fill {
+      height: 100%;
+      border-radius: 50px;
+      background: var(--accent);
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .row-acc-fill.good { background: var(--good); }
+    .row-acc-fill.mid { background: var(--warn); }
+    .row-acc-fill.low { background: var(--bad); }
+    .row-acc-val {
+      text-align: right;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--muted);
+      transition: color 0.4s ease;
+    }
+
+    .syll-split {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--line);
+      transition: border-color 0.4s ease;
+    }
+    .syll-item {
+      display: grid;
+      grid-template-columns: 118px 1fr 64px;
+      align-items: center;
+      gap: 10px;
+    }
+    .syll-lbl {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: color 0.4s ease;
+    }
+    .syll-bar {
+      height: 8px;
+      border-radius: 50px;
+      background: var(--line);
+      overflow: hidden;
+      transition: background 0.4s ease;
+    }
+    .syll-bar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: 50px;
+      background: var(--accent);
+      transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .syll-val {
+      text-align: right;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: color 0.4s ease;
+    }
+
+    /* --- dashboard night theme --- */
+    body[data-theme="night"] .dash-card { border-color: rgba(255, 255, 255, 0.1); }
+    body[data-theme="night"] .ring-card,
+    body[data-theme="night"] .kpi {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.09);
+    }
+    body[data-theme="night"] .ring-track { stroke: rgba(255, 255, 255, 0.09); }
+    body[data-theme="night"] .row-acc-track,
+    body[data-theme="night"] .syll-bar { background: rgba(255, 255, 255, 0.09); }
+    body[data-theme="night"] .ring-pct,
+    body[data-theme="night"] .kpi-num,
+    body[data-theme="night"] .ring-foot b,
+    body[data-theme="night"] .row-acc-lbl,
+    body[data-theme="night"] .syll-val,
+    body[data-theme="night"] .dash-card-title { color: #f4f5ff; }
+    body[data-theme="night"] .ring-label,
+    body[data-theme="night"] .ring-foot,
+    body[data-theme="night"] .kpi-lbl,
+    body[data-theme="night"] .row-acc-val,
+    body[data-theme="night"] .syll-lbl,
+    body[data-theme="night"] .dash-card-sub { color: #a7adcf; }
+    body[data-theme="night"] .dash-meta span {
+      color: #a7adcf;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    body[data-theme="night"] .dash-meta span.early {
+      color: #ffb4b4;
+      background: rgba(196, 69, 54, 0.22);
+      border-color: rgba(255, 140, 120, 0.35);
+    }
+    body[data-theme="night"] .ans-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #f4f5ff;
+    }
+    body[data-theme="night"] .ans-chip .ans-idx { color: rgba(255, 255, 255, 0.55); }
+    body[data-theme="night"] .ans-chip.ok {
+      background: rgba(47, 143, 91, 0.22);
+      border-color: rgba(92, 214, 142, 0.45);
+      color: #8ff0b6;
+    }
+    body[data-theme="night"] .ans-chip.no {
+      background: rgba(196, 69, 54, 0.22);
+      border-color: rgba(255, 140, 120, 0.45);
+      color: #ffb4b4;
+    }
+    body[data-theme="night"] .chart-grid-line,
+    body[data-theme="night"] .chart-baseline { stroke: rgba(255, 255, 255, 0.12); }
+    body[data-theme="night"] .chart-axis-text { fill: #a7adcf; }
+    body[data-theme="night"] .ring-fill[data-tone="mid"] { stroke: #ffc46b; }
+    body[data-theme="night"] .ring-fill[data-tone="good"] { stroke: #5cd68e; }
+    body[data-theme="night"] .ring-fill[data-tone="low"] { stroke: #ff8c78; }
+    body[data-theme="night"] .chart-dot { stroke: #0e1330; }
+    body[data-theme="night"] .syll-split { border-top-color: rgba(255, 255, 255, 0.12); }
+
+    @media (max-width: 620px) {
+      .dash-overview { grid-template-columns: 1fr; }
+    }
 
     .missed-head {
       font-size: 0.8rem;
@@ -915,6 +1236,10 @@
     .missed-list .jp { font-size: 1.4rem; }
     .missed-list .arrow { color: var(--muted); margin: 0 8px; transition: color 0.4s ease; }
     .missed-list .ans { color: var(--good); font-weight: 600; }
+    .missed-given { color: var(--bad); font-size: 0.85rem; transition: color 0.4s ease; }
+    body[data-theme="night"] .missed-list li { color: #f4f5ff; }
+    body[data-theme="night"] .missed-list .ans { color: #8ff0b6; }
+    body[data-theme="night"] .missed-given { color: #ffb4b4; }
     .missed-empty {
       padding: 18px;
       text-align: center;
@@ -1264,7 +1589,13 @@
       .choice-grid { grid-template-columns: 1fr; }
       .choice { font-size: 1.3rem; }
       .card { padding: 24px 18px; }
-      .result-score { font-size: 2.8rem; }
+      .dash-head { margin-bottom: 16px; }
+      .result-msg { text-align: left; }
+      .kpi-grid { gap: 8px; }
+      .kpi { padding: 12px 6px; }
+      .dash-card { padding: 14px 12px; }
+      .row-acc-item { grid-template-columns: 78px 1fr 58px; font-size: 0.8rem; }
+      .syll-item { grid-template-columns: 96px 1fr 58px; }
       .modal-card {
         max-height: 94vh;
         border-radius: 14px;
@@ -1414,26 +1745,75 @@
         <button class="quit-link" id="quitBtn">End early & see results</button>
       </section>
 
-      <!-- ========== RESULTS SCREEN ========== -->
+      <!-- ========== SESSION DASHBOARD ========== -->
       <section class="screen" id="resultsScreen">
-        <div class="result-hero">
-          <div class="result-score"><span id="rScore">0</span><small>/<span id="rTotal">0</span></small></div>
-          <div class="result-pct" id="rPct">0% correct</div>
+        <div class="dash-head">
+          <div>
+            <h1 class="section-title">Session dashboard</h1>
+            <p class="section-sub">How this practice run went, question by question.</p>
+            <div class="dash-meta" id="dashMeta"></div>
+          </div>
           <div class="result-msg" id="rMsg"></div>
         </div>
 
-        <div class="stat-row">
-          <div class="stat-box">
-            <div class="num" id="sHira">—</div>
-            <div class="lbl">Hiragana</div>
+        <div class="dash-overview">
+          <div class="ring-card">
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+                <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52" transform="rotate(-90 60 60)"></circle>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-pct" id="rPct">0%</div>
+                <div class="ring-label">accuracy</div>
+              </div>
+            </div>
+            <div class="ring-foot"><b id="rScore">0</b> / <span id="rTotal">0</span> correct</div>
           </div>
-          <div class="stat-box">
-            <div class="num" id="sKata">—</div>
-            <div class="lbl">Katakana</div>
+
+          <div class="kpi-grid">
+            <div class="kpi"><div class="kpi-num" id="kCorrect">0</div><div class="kpi-lbl">Correct</div></div>
+            <div class="kpi"><div class="kpi-num" id="kMissed">0</div><div class="kpi-lbl">Missed</div></div>
+            <div class="kpi"><div class="kpi-num" id="kStreak">0</div><div class="kpi-lbl">Best streak</div></div>
+            <div class="kpi"><div class="kpi-num" id="kAvg">—</div><div class="kpi-lbl">Avg answer</div></div>
+            <div class="kpi"><div class="kpi-num" id="kDuration">—</div><div class="kpi-lbl">Session time</div></div>
+            <div class="kpi"><div class="kpi-num" id="sBest">—</div><div class="kpi-lbl">Personal best</div></div>
           </div>
-          <div class="stat-box">
-            <div class="num" id="sBest">—</div>
-            <div class="lbl">Best %</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <span class="dash-card-title">Score over the session</span>
+            <span class="dash-card-sub">running accuracy after each answer</span>
+          </div>
+          <div id="scoreChart"></div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <span class="dash-card-title">Answer timeline</span>
+            <span class="dash-card-sub">in the order asked</span>
+          </div>
+          <div class="answer-strip" id="answerStrip"></div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <span class="dash-card-title">Accuracy by row</span>
+            <span class="dash-card-sub">weakest first</span>
+          </div>
+          <div class="row-acc" id="rowAccuracy"></div>
+          <div class="syll-split">
+            <div class="syll-item">
+              <span class="syll-lbl">ひらがな Hiragana</span>
+              <div class="syll-bar"><i id="barHira"></i></div>
+              <span class="syll-val" id="sHira">—</span>
+            </div>
+            <div class="syll-item">
+              <span class="syll-lbl">カタカナ Katakana</span>
+              <div class="syll-bar"><i id="barKata"></i></div>
+              <span class="syll-val" id="sKata">—</span>
+            </div>
           </div>
         </div>
 
@@ -1640,6 +2020,13 @@
       ]}
     ];
 
+    // Quick kana → row lookup so every logged answer can be grouped by row.
+    const KANA_ROW = {};
+    ROWS.forEach(row => row.items.forEach(it => {
+      KANA_ROW[it.h] = row;
+      KANA_ROW[it.k] = row;
+    }));
+
     /* ============================================================
        STATE
     ============================================================ */
@@ -1655,7 +2042,10 @@
       score: 0,
       answered: false,
       missed: [],           // { kana, romaji, syllabary, given }
-      stats: { hiragana: { right: 0, total: 0 }, katakana: { right: 0, total: 0 } }
+      stats: { hiragana: { right: 0, total: 0 }, katakana: { right: 0, total: 0 } },
+      log: [],              // per-answer record that powers the session dashboard
+      qStart: 0,            // performance.now() when the current question appeared
+      startedAt: 0          // session start timestamp
     };
 
     /* ============================================================
@@ -1918,6 +2308,8 @@
       state.score = 0;
       state.missed = [];
       state.stats = { hiragana: { right: 0, total: 0 }, katakana: { right: 0, total: 0 } };
+      state.log = [];
+      state.startedAt = Date.now();
       showScreen(quizScreen);
       renderQuestion();
     }
@@ -1945,6 +2337,7 @@
       if (state.index >= state.queue.length) { finishQuiz(); return; }
       const item = state.queue[state.index];
       state.answered = false;
+      state.qStart = performance.now();
       feedbackEl.textContent = "\u00a0";
       feedbackEl.className = "feedback";
 
@@ -2015,6 +2408,18 @@
       } else {
         state.missed.push({ kana: item.kana, romaji: item.romaji, syllabary: item.syllabary, given: given });
       }
+      // Session log — one entry per answered question, used by the dashboard.
+      const row = KANA_ROW[item.kana];
+      state.log.push({
+        kana: item.kana,
+        romaji: item.romaji,
+        syllabary: item.syllabary,
+        row: row ? row.key : "other",
+        rowLabel: row ? row.label.replace(/\s*\(.*\)$/, "") : "Other",
+        correct: correct,
+        given: given,
+        ms: state.qStart ? Math.round(performance.now() - state.qStart) : 0
+      });
     }
 
     function handleChoice(btn, picked, correctVal, item) {
@@ -2101,16 +2506,34 @@
     });
 
     /* ============================================================
-       FINISH + RESULTS
+       SESSION DASHBOARD
+       The quiz logs every answer; on finish those records become
+       an overview: accuracy ring, KPIs, running-score line,
+       answer timeline, and per-row / per-syllabary accuracy.
     ============================================================ */
+    const RING_CIRCUMFERENCE = 2 * Math.PI * 52;
+    const MODE_LABELS = { choice: "Multiple choice", type: "Typing", reverse: "Reverse" };
+    const SYLL_LABELS = { hiragana: "Hiragana", katakana: "Katakana", both: "Both syllabaries" };
+    const LEVEL_LABELS = { basic: "Basic set", extended: "Extended set", both: "Basic + extended" };
+
     function finishQuiz() {
       $("progressFill").style.width = "100%";
-      const total = state.queue.length;
+      const planned = state.queue.length;
+      const answered = state.log.length;
       const score = state.score;
-      const pct = total ? Math.round((score / total) * 100) : 0;
+      const pct = answered ? Math.round((score / answered) * 100) : 0;
+
+      // Headline numbers
+      $("rPct").textContent = pct + "%";
       $("rScore").textContent = score;
-      $("rTotal").textContent = total;
-      $("rPct").textContent = pct + "% correct";
+      $("rTotal").textContent = answered;
+      $("kCorrect").textContent = score;
+      $("kCorrect").className = "kpi-num good";
+      $("kMissed").textContent = state.missed.length;
+      $("kMissed").className = "kpi-num" + (state.missed.length ? " bad" : "");
+      $("kStreak").textContent = longestStreak();
+      $("kAvg").textContent = avgAnswerTime();
+      $("kDuration").textContent = sessionDuration();
 
       // Encouragement message
       let msg = "";
@@ -2121,15 +2544,36 @@
       else msg = "Keep at it — review the missed characters below.";
       $("rMsg").textContent = msg;
 
-      // Per-syllabary stats
+      // Session meta chips
+      const meta = $("dashMeta");
+      meta.innerHTML = "";
+      [
+        MODE_LABELS[state.mode] || state.mode,
+        SYLL_LABELS[state.syll] || state.syll,
+        LEVEL_LABELS[state.level] || state.level,
+        planned + (planned === 1 ? " question" : " questions")
+      ].forEach(text => {
+        const chip = document.createElement("span");
+        chip.textContent = text;
+        meta.appendChild(chip);
+      });
+      if (answered < planned) {
+        const chip = document.createElement("span");
+        chip.className = "early";
+        chip.textContent = "Ended early · " + answered + " of " + planned;
+        meta.appendChild(chip);
+      }
+
+      // Per-syllabary accuracy
       const sh = state.stats.hiragana;
       const sk = state.stats.katakana;
+      const hPct = sh.total ? Math.round((sh.right / sh.total) * 100) : 0;
+      const kPct = sk.total ? Math.round((sk.right / sk.total) * 100) : 0;
       $("sHira").textContent = sh.total ? sh.right + "/" + sh.total : "—";
       $("sKata").textContent = sk.total ? sk.right + "/" + sk.total : "—";
 
       // Persist + show best %
-      const best = saveBest(state.mode, pct);
-      $("sBest").textContent = best + "%";
+      $("sBest").textContent = saveBest(state.mode, pct) + "%";
       refreshBestPill();
 
       // Missed list
@@ -2147,11 +2591,213 @@
           const li = document.createElement("li");
           li.innerHTML = '<span><span class="jp">' + m.kana + '</span> <span class="arrow">→</span> ' +
                          '<span class="ans">' + m.romaji + '</span></span>' +
-                         '<span style="color:var(--bad); font-size:0.85rem;">you: ' + escapeHtml(m.given) + '</span>';
+                         '<span class="missed-given">you: ' + escapeHtml(m.given) + '</span>';
           list.appendChild(li);
         });
       }
+
       showScreen(resultsScreen);
+
+      // Render the charts once the dashboard has a real width to draw into.
+      renderScoreChart();
+      renderAnswerStrip();
+      renderRowAccuracy();
+
+      // Animate the ring + syllabary bars from zero.
+      const ring = $("ringFill");
+      ring.setAttribute("data-tone", pct >= 90 ? "good" : pct >= 70 ? "mid" : "low");
+      ring.style.strokeDasharray = RING_CIRCUMFERENCE + "px";
+      ring.style.strokeDashoffset = RING_CIRCUMFERENCE + "px";
+      setTimeout(() => {
+        ring.style.strokeDashoffset = (RING_CIRCUMFERENCE * (1 - pct / 100)) + "px";
+        $("barHira").style.width = hPct + "%";
+        $("barKata").style.width = kPct + "%";
+      }, 60);
+    }
+
+    // Longest run of consecutive correct answers in this session.
+    function longestStreak() {
+      let best = 0, run = 0;
+      state.log.forEach(e => {
+        if (e.correct) { run++; if (run > best) best = run; }
+        else run = 0;
+      });
+      return best;
+    }
+
+    // Mean time between a question appearing and the answer being locked in.
+    function avgAnswerTime() {
+      const timed = state.log.filter(e => e.ms > 0);
+      if (!timed.length) return "—";
+      const avg = timed.reduce((sum, e) => sum + e.ms, 0) / timed.length;
+      return (avg / 1000).toFixed(1) + "s";
+    }
+
+    function sessionDuration() {
+      if (!state.startedAt) return "—";
+      const sec = Math.max(0, Math.round((Date.now() - state.startedAt) / 1000));
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return m ? m + "m " + String(s).padStart(2, "0") + "s" : s + "s";
+    }
+
+    /* --- running accuracy line chart (inline SVG) --- */
+    let chartFrame = 0;
+    window.addEventListener("resize", () => {
+      if (!resultsScreen.classList.contains("active")) return;
+      cancelAnimationFrame(chartFrame);
+      chartFrame = requestAnimationFrame(renderScoreChart);
+    });
+
+    function renderScoreChart() {
+      const host = $("scoreChart");
+      host.innerHTML = "";
+      if (!state.log.length) {
+        host.innerHTML = '<div class="dash-empty">No answers recorded in this session.</div>';
+        return;
+      }
+
+      // Accuracy after each answer — the "score so far" curve.
+      let right = 0;
+      const pts = state.log.map((e, i) => {
+        if (e.correct) right++;
+        return { pct: (right / (i + 1)) * 100, correct: e.correct };
+      });
+
+      const W = Math.max(280, host.clientWidth || 600);
+      const H = 170;
+      const padL = 38, padR = 14, padT = 14, padB = 26;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+      const xAt = (i) => padL + (pts.length === 1 ? plotW / 2 : (i / (pts.length - 1)) * plotW);
+      const yAt = (v) => padT + (1 - v / 100) * plotH;
+
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const node = (name, attrs, text) => {
+        const n = document.createElementNS(SVG_NS, name);
+        Object.keys(attrs).forEach(k => n.setAttribute(k, attrs[k]));
+        if (text != null) n.textContent = text;
+        return n;
+      };
+
+      const svg = node("svg", {
+        viewBox: "0 0 " + W + " " + H,
+        "class": "score-chart",
+        role: "img",
+        "aria-label": "Running accuracy across " + pts.length + " answers, ending at " +
+                      Math.round(pts[pts.length - 1].pct) + " percent."
+      });
+
+      // Gradient under the line
+      const defs = node("defs", {});
+      const grad = node("linearGradient", { id: "scoreAreaGrad", x1: "0", y1: "0", x2: "0", y2: "1" });
+      [["0%", "0.28"], ["100%", "0"]].forEach(([offset, opacity]) => {
+        grad.appendChild(node("stop", {
+          offset: offset,
+          style: "stop-color:var(--chart);stop-opacity:" + opacity
+        }));
+      });
+      defs.appendChild(grad);
+      svg.appendChild(defs);
+
+      // Grid lines: 100% / 50% / 0%
+      [100, 50, 0].forEach(v => {
+        const y = yAt(v);
+        svg.appendChild(node("line", {
+          x1: padL, y1: y, x2: W - padR, y2: y,
+          "class": v === 0 ? "chart-baseline" : "chart-grid-line"
+        }));
+        svg.appendChild(node("text", {
+          x: padL - 8, y: y + 3.5, "text-anchor": "end", "class": "chart-axis-text"
+        }, v + "%"));
+      });
+
+      // Line + filled area
+      const coords = pts.map((p, i) => [xAt(i), yAt(p.pct)]);
+      const lineD = coords.length === 1
+        ? "M" + padL + " " + coords[0][1].toFixed(1) + " L" + (W - padR) + " " + coords[0][1].toFixed(1)
+        : coords.map((c, i) => (i ? "L" : "M") + c[0].toFixed(1) + " " + c[1].toFixed(1)).join(" ");
+      const baseY = yAt(0);
+      const areaD = lineD + " L" + (W - padR) + " " + baseY + " L" + padL + " " + baseY + " Z";
+      svg.appendChild(node("path", { d: areaD, "class": "chart-area" }));
+      svg.appendChild(node("path", { d: lineD, "class": "chart-line" }));
+
+      // Dots: every answer for short sessions, misses only for long ones.
+      const showAll = coords.length <= 30;
+      coords.forEach((c, i) => {
+        if (!showAll && pts[i].correct) return;
+        svg.appendChild(node("circle", {
+          cx: c[0].toFixed(1), cy: c[1].toFixed(1), r: showAll ? 3.2 : 2.8,
+          "class": "chart-dot " + (pts[i].correct ? "ok" : "no")
+        }));
+      });
+
+      // Answer numbers at both ends
+      svg.appendChild(node("text", {
+        x: padL, y: H - 8, "text-anchor": "start", "class": "chart-axis-text"
+      }, "1"));
+      if (coords.length > 1) {
+        svg.appendChild(node("text", {
+          x: W - padR, y: H - 8, "text-anchor": "end", "class": "chart-axis-text"
+        }, String(coords.length)));
+      }
+
+      host.appendChild(svg);
+    }
+
+    /* --- answer timeline: one tile per question, in order --- */
+    function renderAnswerStrip() {
+      const strip = $("answerStrip");
+      strip.innerHTML = "";
+      if (!state.log.length) {
+        strip.innerHTML = '<div class="dash-empty">No answers recorded in this session.</div>';
+        return;
+      }
+      state.log.forEach((e, i) => {
+        const chip = document.createElement("div");
+        chip.className = "ans-chip " + (e.correct ? "ok" : "no");
+        chip.title = "#" + (i + 1) + " " + e.kana + " → " + e.romaji +
+                     (e.correct ? " · correct" : " · you answered " + (e.given || "—"));
+        chip.innerHTML = '<span class="jp">' + escapeHtml(e.kana) + '</span>' +
+                         '<span class="ans-idx">' + (i + 1) + '</span>';
+        strip.appendChild(chip);
+      });
+    }
+
+    /* --- per-row accuracy, weakest first --- */
+    function renderRowAccuracy() {
+      const box = $("rowAccuracy");
+      box.innerHTML = "";
+      const groups = new Map();
+      state.log.forEach(e => {
+        const g = groups.get(e.row) || { label: e.rowLabel, right: 0, total: 0 };
+        g.total++;
+        if (e.correct) g.right++;
+        groups.set(e.row, g);
+      });
+      if (!groups.size) {
+        box.innerHTML = '<div class="dash-empty">No answers recorded in this session.</div>';
+        return;
+      }
+      const rows = Array.from(groups.values())
+        .map(g => ({
+          label: g.label,
+          right: g.right,
+          total: g.total,
+          pct: Math.round((g.right / g.total) * 100)
+        }))
+        .sort((a, b) => a.pct - b.pct || b.total - a.total);
+
+      rows.forEach(r => {
+        const item = document.createElement("div");
+        item.className = "row-acc-item";
+        const tone = r.pct >= 80 ? "good" : r.pct >= 50 ? "mid" : "low";
+        item.innerHTML =
+          '<span class="row-acc-lbl">' + escapeHtml(r.label) + '</span>' +
+          '<div class="row-acc-track"><div class="row-acc-fill ' + tone + '" style="width:' + r.pct + '%"></div></div>' +
+          '<span class="row-acc-val">' + r.right + "/" + r.total + ' · ' + r.pct + '%</span>';
+        box.appendChild(item);
+      });
     }
 
     function escapeHtml(s) {
