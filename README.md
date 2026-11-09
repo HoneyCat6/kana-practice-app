@@ -5,3 +5,8 @@ A simple, self-contained web app for practicing Japanese kana (hiragana and kata
 ## Usage
 
 Open `kana-practice.html` in any modern web browser.
+
+## Live site
+
+The app is hosted on GitHub Pages at:
+https://honeycat6.github.io/kana-practice-app/
